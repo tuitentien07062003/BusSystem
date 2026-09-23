@@ -1,0 +1,100 @@
+/* Import Tailwind v4 (chỉ cần 1 dòng) */
+@import "tailwindcss";
+
+/* Import CSS của Leaflet — phải có để bản đồ hiển thị đúng */
+@import "leaflet/dist/leaflet.css";
+
+/* Biến theme tùy chỉnh — dùng @theme trong Tailwind v4 */
+@theme {
+  --color-bg-page: #e9edf2;
+  --color-bg-sidebar: #f5f7fa;
+  --color-bg-panel: #ffffff;
+  --color-bg-subtle: #eef2f6;
+  --color-border: #d0d7e2;
+  --color-text-main: #1a2332;
+  --color-text-sub: #4a5a7a;
+  --color-text-muted: #6a7a9a;
+  --color-accent-go: #2e7d5a;
+  --color-accent-ret: #1a5a8a;
+  --color-warn: #d48c2c;
+}
+
+/* Reset cơ bản */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+body {
+  font-family:
+    "Segoe UI",
+    Roboto,
+    system-ui,
+    -apple-system,
+    sans-serif;
+  background: var(--color-bg-page);
+  color: var(--color-text-main);
+}
+
+/* ─── Custom slider đẹp hơn mặc định ─── */
+input[type="range"].slider-custom {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--color-border);
+  outline: none;
+  cursor: pointer;
+}
+
+input[type="range"].slider-custom::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--color-accent-ret);
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+input[type="range"].slider-custom::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+input[type="range"].slider-custom::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--color-accent-ret);
+  cursor: pointer;
+  border: none;
+}
+
+/* ─── Scrollbar mảnh ─── */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 4px;
+}
+
+/* ─── Popup Leaflet ─── */
+.bus-popup b {
+  font-size: 14px;
+  color: var(--color-text-main);
+}
+.bus-popup .sub {
+  color: var(--color-text-sub);
+  font-size: 11px;
+  margin-top: 2px;
+}

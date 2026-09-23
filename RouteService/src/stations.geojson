@@ -1,0 +1,927 @@
+{
+  "type": "FeatureCollection",
+  "generator": "overpass-turbo",
+  "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.",
+  "timestamp": "2026-09-14T04:55:05Z",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/2130165447",
+        "addr:city": "Quận 5",
+        "addr:housenumber": "25A",
+        "addr:province": "Hồ Chí Minh",
+        "addr:street": "Sư Vạn Hạnh",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Nhà Xe Thịnh Phát",
+        "public_transport": "station",
+        "shop": "ticket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.6730294,
+          10.7602467
+        ]
+      },
+      "id": "node/2130165447"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4540000289",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến xe Quang Tỷ Sài Gòn",
+        "public_transport": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.6558587,
+          10.7546801
+        ]
+      },
+      "id": "node/4540000289"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4576829495",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Công Ty TNHH Vận Tải Thảo Châu",
+        "public_transport": "station",
+        "wheelchair": "no"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.6729505,
+          10.7599903
+        ]
+      },
+      "id": "node/4576829495"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4590302398",
+        "amenity": "bus_station",
+        "name": "Bến xe khách Bà Rịa",
+        "name:en": "Ba Ria bus station",
+        "name:vi": "Bến xe khách Bà Rịa"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.1681814,
+          10.4908709
+        ]
+      },
+      "id": "node/4590302398"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5198050957",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến xe Củ Chi",
+        "public_transport": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.4822102,
+          10.9713924
+        ]
+      },
+      "id": "node/5198050957"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5248121923",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến xe Bình Châu",
+        "public_transport": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.5480757,
+          10.5560128
+        ]
+      },
+      "id": "node/5248121923"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5596865382",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Xe Toàn Thắng",
+        "public_transport": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.0949102,
+          10.3648888
+        ]
+      },
+      "id": "node/5596865382"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5606335909",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Phuong Trang",
+        "public_transport": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.1586533,
+          10.4244794
+        ]
+      },
+      "id": "node/5606335909"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6419007385",
+        "amenity": "bus_station",
+        "name": "Tuyến số 4 (Vũng Tàu - Bình Châu)",
+        "name:en": "Bus 4 (Vung Tau - Binh Chau)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.351104,
+          10.5172596
+        ]
+      },
+      "id": "node/6419007385"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6419920285",
+        "amenity": "bus_station",
+        "name": "Tuyến số 4 (Bình Châu - Vũng Tàu)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.3474316,
+          10.5146965
+        ]
+      },
+      "id": "node/6419920285"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8239005645",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến Đầm",
+        "public_transport": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.5689583,
+          8.6593061
+        ]
+      },
+      "id": "node/8239005645"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9584841105",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Nhà xe Thành Bưởi Lê Hồng Phong",
+        "public_transport": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.6769699,
+          10.7617396
+        ]
+      },
+      "id": "node/9584841105"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9585001097",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Nhà xe Thiện Thành",
+        "public_transport": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.6379096,
+          10.787502
+        ]
+      },
+      "id": "node/9585001097"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9585001100",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Nhà Xe Tiến Oanh - Đồng Đen",
+        "public_transport": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.6432607,
+          10.7856741
+        ]
+      },
+      "id": "node/9585001100"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9585162923",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Nhà Xe Hoa Mai",
+        "public_transport": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.6998101,
+          10.7692272
+        ]
+      },
+      "id": "node/9585162923"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9585162924",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Nhà Xe Toàn Thắng",
+        "public_transport": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.7009692,
+          10.7701978
+        ]
+      },
+      "id": "node/9585162924"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9585476419",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Huy Hoàng Limousine",
+        "public_transport": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.6983944,
+          10.7679444
+        ]
+      },
+      "id": "node/9585476419"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9587171471",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Nhà xe Tuấn Tú",
+        "public_transport": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.6154357,
+          10.7937711
+        ]
+      },
+      "id": "node/9587171471"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9587171477",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Nhà xe Ngọc Ánh",
+        "public_transport": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.6542372,
+          10.7342176
+        ]
+      },
+      "id": "node/9587171477"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9587246059",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến xe Chợ Lớn",
+        "public_transport": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.6509512,
+          10.7511824
+        ]
+      },
+      "id": "node/9587246059"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9587268683",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến xe Thành Bưởi - Hàng Xanh",
+        "public_transport": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.7184993,
+          10.7985763
+        ]
+      },
+      "id": "node/9587268683"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9587268684",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Nhà xe Thành Bưởi - Điện Biên Phủ",
+        "public_transport": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.7184705,
+          10.7985379
+        ]
+      },
+      "id": "node/9587268684"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9587486355",
+        "addr:city": "Phường An Phú Đông",
+        "addr:housenumber": "720",
+        "addr:postcode": "71516",
+        "addr:province": "Thành phố Hồ Chí Minh",
+        "addr:street": "Đỗ Mười",
+        "addr:subdistrict": "Khu phố 43",
+        "air_conditioning": "no",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "check_date": "2026-03-27",
+        "loc_name": "Bến xe Ngã tư Ga",
+        "name": "Nga Tu Ga Bus Station",
+        "name:vi": "Bến xe Ngã tư Ga",
+        "opening_hours": "24/7",
+        "operator": "Công ty Cổ phần Bến bãi Vận tải Sài Gòn",
+        "phone": "02822338686",
+        "public_transport": "station",
+        "wheelchair": "yes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.6787234,
+          10.8623069
+        ]
+      },
+      "id": "node/9587486355"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9593196280",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến Xe 39",
+        "public_transport": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.603666,
+          10.8252894
+        ]
+      },
+      "id": "node/9593196280"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9593340037",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến xe Thủ Dầu Một",
+        "public_transport": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.6683665,
+          10.966114
+        ]
+      },
+      "id": "node/9593340037"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9593797952",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến xe buýt Hiệp Thành",
+        "public_transport": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.6418865,
+          10.8776323
+        ]
+      },
+      "id": "node/9593797952"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9667090216",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Trạm Xe Bus Nhà Xe Quốc Hoàng",
+        "public_transport": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.6593474,
+          10.7559866
+        ]
+      },
+      "id": "node/9667090216"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10727721275",
+        "access": "private",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "RMIT Bus Services",
+        "operator": "RMIT University Vietnam",
+        "public_transport": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.6945968,
+          10.7292739
+        ]
+      },
+      "id": "node/10727721275"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10741748105",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến xe buýt Sài Gòn",
+        "public_transport": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.6895544,
+          10.7676825
+        ]
+      },
+      "id": "node/10741748105"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11755184276",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Đại học Nông Lâm",
+        "public_transport": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.7877072,
+          10.8680054
+        ]
+      },
+      "id": "node/11755184276"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11757386654",
+        "addr:city": "Thành phố Hồ Chí Minh",
+        "addr:district": "Quận Bình Thạnh",
+        "addr:housenumber": "292",
+        "addr:province": "Thành phố Hồ Chí Minh",
+        "addr:street": "Đường Đinh Bộ Lĩnh",
+        "addr:subdistrict": "Phường 26",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến xe Miền Đông",
+        "public_transport": "station",
+        "wikidata": "Q6843804"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.7107009,
+          10.8149424
+        ]
+      },
+      "id": "node/11757386654"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11757446006",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến xe buýt Đầm Sen",
+        "public_transport": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.6401657,
+          10.7676911
+        ]
+      },
+      "id": "node/11757446006"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11758401275",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến xe Tân Phú",
+        "public_transport": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.6334434,
+          10.8091261
+        ]
+      },
+      "id": "node/11758401275"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11761069797",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến xe Cầu Lớn",
+        "public_transport": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.5355802,
+          10.8718913
+        ]
+      },
+      "id": "node/11761069797"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11773635263",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến xe buýt Đại học Quốc gia",
+        "public_transport": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.778731,
+          10.8841829
+        ]
+      },
+      "id": "node/11773635263"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11774744238",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến xe Thới An",
+        "public_transport": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.6478269,
+          10.8785472
+        ]
+      },
+      "id": "node/11774744238"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11811792478",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến xe Tân Quy",
+        "public_transport": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.5781863,
+          10.9840411
+        ]
+      },
+      "id": "node/11811792478"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11813095037",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến xe Vũng Tàu",
+        "public_transport": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.0871516,
+          10.3503558
+        ]
+      },
+      "id": "node/11813095037"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11813897475",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến xe Cần Giờ",
+        "public_transport": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.9638851,
+          10.4101675
+        ]
+      },
+      "id": "node/11813897475"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11868497849",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến xe Miền Đông mới",
+        "name:th": "สถานีขนส่งซ้วยเตียน",
+        "public_transport": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.8154992,
+          10.8802354
+        ]
+      },
+      "id": "node/11868497849"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11878284555",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến xe Hòa Hiệp",
+        "public_transport": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.5117604,
+          10.6942239
+        ]
+      },
+      "id": "node/11878284555"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12345197711",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến xe Bến Cát",
+        "public_transport": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.6022863,
+          11.1250171
+        ]
+      },
+      "id": "node/12345197711"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12345942979",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến xe Tân Uyên",
+        "public_transport": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.7926275,
+          11.0645467
+        ]
+      },
+      "id": "node/12345942979"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12690145995",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến xe Bàu Bàng",
+        "public_transport": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.6339397,
+          11.240709
+        ]
+      },
+      "id": "node/12690145995"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/13103994523",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến xe buýt Hóc Môn",
+        "public_transport": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.5651665,
+          10.9131577
+        ]
+      },
+      "id": "node/13103994523"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/13381416920",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến xe buýt Lê Minh Xuân",
+        "public_transport": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.5437146,
+          10.7581367
+        ]
+      },
+      "id": "node/13381416920"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/13398685107",
+        "amenity": "bus_station",
+        "name": "Nhà Xe An Anh",
+        "phone": "+84 1900 996632",
+        "website": "https://nhaxeananh.com/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.6712259,
+          10.7592422
+        ]
+      },
+      "id": "node/13398685107"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/13576594302",
+        "amenity": "bus_station",
+        "name": "Meko limosine ho chi minh city"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.6643201,
+          10.7598484
+        ]
+      },
+      "id": "node/13576594302"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/13625676302",
+        "amenity": "bus_station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.7216581,
+          10.8530916
+        ]
+      },
+      "id": "node/13625676302"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/13625676303",
+        "amenity": "bus_station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.6708272,
+          10.7589918
+        ]
+      },
+      "id": "node/13625676303"
+    }
+  ]
+}
