@@ -36,9 +36,9 @@ function makeStopIcon(seq) {
   // Giọt nước với số bên trong
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="26" height="32" viewBox="0 0 34 42">
     <path d="M17 0C7.6 0 0 7.6 0 17c0 12 17 25 17 25s17-13 17-25c0-9.4-7.6-17-17-17z"
-          fill="#1a5a8a" stroke="#fff" stroke-width="2.5"/>
+          fill="#169BA2" stroke="#fff" stroke-width="2.5"/>
     <circle cx="17" cy="17" r="9" fill="#fff" opacity="0.95"/>
-    <text x="17" y="21" font-size="11" font-weight="bold" text-anchor="middle" fill="#1a5a8a">${seq}</text>
+    <text x="17" y="21" font-size="11" font-weight="bold" text-anchor="middle" fill="#169BA2">${seq}</text>
   </svg>`;
   return L.divIcon({ html: svg, className: '', iconSize: [26, 32], iconAnchor: [13, 32] });
 }
@@ -300,7 +300,7 @@ export function RoutePreviewMap({
 
     if (!preview) {
       if (startDepot && endDepot) {
-        const s = L.marker([startDepot.latitude, startDepot.longitude], { icon: makeDepotIcon('#2e7d5a', 'Đ') })
+        const s = L.marker([startDepot.latitude, startDepot.longitude], { icon: makeDepotIcon('#169BA2', 'Đ') })
           .addTo(map).bindPopup(`<b>${startDepot.stop_name}</b>`);
         const e = L.marker([endDepot.latitude, endDepot.longitude], { icon: makeDepotIcon('#c0392b', 'C') })
           .addTo(map).bindPopup(`<b>${endDepot.stop_name}</b>`);
@@ -313,7 +313,7 @@ export function RoutePreviewMap({
           hasFittedRef.current = true;
         }
       } else if (startDepot) {
-        const s = L.marker([startDepot.latitude, startDepot.longitude], { icon: makeDepotIcon('#2e7d5a', 'Đ') }).addTo(map);
+        const s = L.marker([startDepot.latitude, startDepot.longitude], { icon: makeDepotIcon('#169BA2', 'Đ') }).addTo(map);
         markersRef.current.push(s);
         if (!hasFittedRef.current) { map.setView([startDepot.latitude, startDepot.longitude], 14); hasFittedRef.current = true; }
       }
@@ -321,7 +321,7 @@ export function RoutePreviewMap({
     }
 
     const routeLayer = L.geoJSON(preview.shape, {
-      style: { color: '#1a5a8a', weight: 5, opacity: 0.85 },
+      style: { color: '#169BA2', weight: 5, opacity: 0.85 },
     }).addTo(map);
     routeLayerRef.current = routeLayer;
 
@@ -346,7 +346,7 @@ export function RoutePreviewMap({
       const isFirst = idx === 0;
       const isLast = idx === preview.points.length - 1;
       const icon = isDepot
-        ? makeDepotIcon(isFirst ? '#2e7d5a' : isLast ? '#c0392b' : '#d48c2c', isFirst ? 'Đ' : isLast ? 'C' : '·')
+        ? makeDepotIcon(isFirst ? '#169BA2' : isLast ? '#c0392b' : '#d48c2c', isFirst ? 'Đ' : isLast ? 'C' : '·')
         : makeStopIcon(p.sequence - 1);
       const m = L.marker([p.latitude, p.longitude], { icon, zIndexOffset: 1000 })
         .addTo(map)
@@ -380,7 +380,7 @@ export function RoutePreviewMap({
     // Pin giọt nước nhỏ màu xanh (giống depot nhưng nhỏ hơn)
     const pinSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="28" viewBox="0 0 34 42">
       <path d="M17 0C7.6 0 0 7.6 0 17c0 12 17 25 17 25s17-13 17-25c0-9.4-7.6-17-17-17z"
-            fill="#1a5a8a" stroke="#fff" stroke-width="2.5"/>
+            fill="#169BA2" stroke="#fff" stroke-width="2.5"/>
       <circle cx="17" cy="17" r="5.5" fill="#fff"/>
     </svg>`;
 

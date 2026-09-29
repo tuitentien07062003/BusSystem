@@ -27,12 +27,12 @@ function DepotPicker({ depots, value, onChange, placeholder, disabled }) {
         className={`w-full h-9 px-3 rounded-md border bg-white text-sm text-left flex items-center justify-between gap-2 cursor-pointer transition-colors ${
           disabled
             ? 'border-[#e5eaf0] text-[#b0bcca] cursor-not-allowed'
-            : 'border-[#cbd5e1] hover:border-[#5fc3e4]'
+            : 'border-[#cbd5e1] hover:border-[#169BA2]'
         }`}
       >
         {selected ? (
           <span className="flex items-center gap-1.5 min-w-0">
-            <MapPin size={13} className="text-[#2e7d5a] flex-shrink-0" />
+            <MapPin size={13} className="text-[#169BA2] flex-shrink-0" />
             <span className="truncate font-medium text-[#1a2332]">{selected.stop_name}</span>
             <span className="text-[10px] text-[#8a9aaa] font-mono flex-shrink-0">{selected.stop_id}</span>
           </span>
@@ -83,11 +83,11 @@ function DepotPicker({ depots, value, onChange, placeholder, disabled }) {
                       setKw('');
                     }}
                     className={`w-full flex items-center justify-between gap-2 px-3 py-2 text-left text-xs hover:bg-[#eef2f6] cursor-pointer ${
-                      value === d.id ? 'bg-[#dce8f0]' : ''
+                      value === d.id ? 'bg-[#E6F4F5]' : ''
                     }`}
                   >
                     <span className="flex items-center gap-1.5 min-w-0">
-                      <MapPin size={11} className="text-[#2e7d5a] flex-shrink-0" />
+                      <MapPin size={11} className="text-[#169BA2] flex-shrink-0" />
                       <span className="truncate font-medium text-[#1a2332]">{d.stop_name}</span>
                     </span>
                     <span className="text-[10px] text-[#8a9aaa] font-mono flex-shrink-0">{d.stop_id}</span>
@@ -107,7 +107,7 @@ export function DepotSelector({ depots, startId, endId, onStartChange, onEndChan
     <div className="space-y-3">
       <div className="space-y-1">
         <div className="flex items-center gap-1.5">
-          <span className="w-5 h-5 rounded-full bg-[#2e7d5a] text-white text-[10px] font-bold flex items-center justify-center">
+          <span className="w-5 h-5 rounded-full bg-[#169BA2] text-white text-[10px] font-bold flex items-center justify-center">
             Đ
           </span>
           <span className="text-xs font-semibold text-[#4a5a7a]">Điểm đầu (Depot)</span>

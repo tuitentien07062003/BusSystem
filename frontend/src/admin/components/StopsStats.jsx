@@ -15,16 +15,16 @@ export function StopsStats() {
       label: 'Tổng số trạm',
       value: total,
       icon: ListChecks,
-      color: 'text-[#1a5a8a] bg-[#dce8f0]',
-      accent: 'bg-[#1a5a8a]',
+      color: 'text-[#169BA2] bg-[#E6F4F5]',
+      accent: 'bg-[#169BA2]',
     },
     {
       key: 'active',
       label: 'Đang hoạt động',
       value: active,
       icon: Activity,
-      color: 'text-[#2e7d5a] bg-[#dce8de]',
-      accent: 'bg-[#2e7d5a]',
+      color: 'text-[#169BA2] bg-[#E6F4F5]',
+      accent: 'bg-[#169BA2]',
     },
     {
       key: 'inactive',
@@ -42,7 +42,7 @@ export function StopsStats() {
         {items.map(({ key, label, value, icon: Icon, color, accent }) => (
           <div
             key={key}
-            className="relative bg-white rounded-lg border border-[#d0d7e2] p-4 flex items-center gap-3 transition-all hover:border-[#5fc3e4] hover:shadow-md overflow-hidden group"
+            className="relative bg-white rounded-lg border border-[#d0d7e2] p-4 flex items-center gap-3 transition-all hover:border-[#169BA2] hover:shadow-md overflow-hidden group"
           >
             <div
               className={`absolute left-0 top-0 bottom-0 w-1 ${accent} opacity-70 group-hover:opacity-100 transition-opacity`}
@@ -68,18 +68,18 @@ export function StopsStats() {
         <div className="bg-white rounded-lg border border-[#d0d7e2] px-4 py-3">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-1.5">
-              <TrendingUp size={13} className="text-[#2e7d5a]" />
+              <TrendingUp size={13} className="text-[#169BA2]" />
               <span className="text-[11px] font-semibold text-[#4a5a7a] uppercase tracking-wide">
                 Tỷ lệ trạm đang hoạt động
               </span>
             </div>
-            <span className="text-xs font-bold text-[#2e7d5a]">
+            <span className="text-xs font-bold text-[#169BA2]">
               {activePercent.toFixed(1)}%
             </span>
           </div>
           <div className="h-1.5 w-full bg-[#eef2f6] rounded-full overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-[#2e7d5a] to-[#4caf50] rounded-full transition-all duration-500"
+              className="h-full bg-gradient-to-r from-[#169BA2] to-[#4caf50] rounded-full transition-all duration-500"
               style={{ width: `${activePercent}%` }}
             />
           </div>

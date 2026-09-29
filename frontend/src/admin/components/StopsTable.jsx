@@ -41,8 +41,8 @@ function SortHeader({ label, field, sortBy, sortOrder, onSort, className = '' })
     >
       <button
         onClick={() => onSort(field)}
-        className={`inline-flex items-center gap-1 hover:text-[#1a5a8a] cursor-pointer transition-colors ${
-          isActive ? 'text-[#1a5a8a]' : ''
+        className={`inline-flex items-center gap-1 hover:text-[#169BA2] cursor-pointer transition-colors ${
+          isActive ? 'text-[#169BA2]' : ''
         }`}
       >
         {label}
@@ -162,7 +162,7 @@ export function StopsTable({
                   <td className="px-3 py-2.5 text-[#6a7a9a] font-mono text-xs">
                     {s.id}
                   </td>
-                  <td className="px-3 py-2.5 font-mono text-xs text-[#1a5a8a] font-semibold">
+                  <td className="px-3 py-2.5 font-mono text-xs text-[#169BA2] font-semibold">
                     {s.stop_id}
                   </td>
                   <td
@@ -189,7 +189,7 @@ export function StopsTable({
                         <button
                           onClick={() => onFocusMap(s)}
                           title="Xem trên bản đồ"
-                          className="w-5 h-5 rounded flex items-center justify-center text-[#8a9aaa] hover:bg-[#eef2f6] hover:text-[#1a5a8a] cursor-pointer shrink-0"
+                          className="w-5 h-5 rounded flex items-center justify-center text-[#8a9aaa] hover:bg-[#eef2f6] hover:text-[#169BA2] cursor-pointer shrink-0"
                         >
                           <MapPin size={11} />
                         </button>
@@ -213,7 +213,7 @@ export function StopsTable({
                         title="Sửa thông tin"
                         className="h-7 w-7 rounded-md border border-[#cbd5e1] bg-white hover:bg-[#eef2f6] flex items-center justify-center cursor-pointer"
                       >
-                        <Pencil size={12} className="text-[#1a5a8a]" />
+                        <Pencil size={12} className="text-[#169BA2]" />
                       </button>
                       <button
                         onClick={() => handleToggleStatus(s)}
@@ -222,13 +222,13 @@ export function StopsTable({
                         className={`h-7 w-7 rounded-md border flex items-center justify-center cursor-pointer disabled:opacity-50 ${
                           s.is_active
                             ? 'border-[#f5b7b1] bg-white hover:bg-[#fde8e8]'
-                            : 'border-[#b8d4b0] bg-white hover:bg-[#dce8de]'
+                            : 'border-[#A8D5D8] bg-white hover:bg-[#E6F4F5]'
                         }`}
                       >
                         {s.is_active ? (
                           <PowerOff size={12} className="text-[#c0392b]" />
                         ) : (
-                          <Power size={12} className="text-[#2e7d5a]" />
+                          <Power size={12} className="text-[#169BA2]" />
                         )}
                       </button>
                     </div>

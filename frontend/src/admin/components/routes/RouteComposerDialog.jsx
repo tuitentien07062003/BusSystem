@@ -252,7 +252,7 @@ export function RouteComposerDialog({ route, open, onOpenChange }) {
   const [routeId, setRouteId] = useState("");
   const [routeShortName, setRouteShortName] = useState("");
   const [routeFullName, setRouteFullName] = useState("");
-  const [routeColor, setRouteColor] = useState("#0f766e");
+  const [routeColor, setRouteColor] = useState("#169BA2");
   const [agencyId, setAgencyId] = useState(null);
   const [isActive, setIsActive] = useState(true);
   const [formErrors, setFormErrors] = useState({});
@@ -362,14 +362,14 @@ export function RouteComposerDialog({ route, open, onOpenChange }) {
         setRouteId(route.route_id || "");
         setRouteShortName(route.route_short_name || "");
         setRouteFullName(route.route_full_name || "");
-        setRouteColor(route.route_color || "#0f766e");
+        setRouteColor(route.route_color || "#169BA2");
         setAgencyId(route.agency_id ?? null);
         setIsActive(route.is_active ?? true);
       } else {
         setRouteId("");
         setRouteShortName("");
         setRouteFullName("");
-        setRouteColor("#0f766e");
+        setRouteColor("#169BA2");
         setAgencyId(null);
         setIsActive(true);
       }
@@ -719,7 +719,7 @@ export function RouteComposerDialog({ route, open, onOpenChange }) {
                       <Input
                         value={routeColor}
                         onChange={(e) => setRouteColor(e.target.value)}
-                        placeholder="#0f766e"
+                        placeholder="#169BA2"
                         className="font-mono text-xs"
                       />
                     </div>

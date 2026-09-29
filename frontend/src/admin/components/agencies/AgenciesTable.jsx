@@ -19,13 +19,13 @@ export function AgenciesTable({ agencies, isLoading, onEdit, sortBy, sortOrder, 
     { key: 'id', label: 'ID', sortable: true, width: 60,
       render: (r) => <span className="text-[#6a7a9a] font-mono text-xs">{r.id}</span> },
     { key: 'agency_id', label: 'Mã', sortable: true, width: 100,
-      render: (r) => <span className="font-mono text-xs text-[#1a5a8a] font-semibold">{r.agency_id}</span> },
+      render: (r) => <span className="font-mono text-xs text-[#169BA2] font-semibold">{r.agency_id}</span> },
     { key: 'agency_name', label: 'Tên nhà vận hành', sortable: true,
       render: (r) => <span className="font-medium text-[#1a2332]">{r.agency_name}</span> },
     { key: 'agency_url', label: 'Website',
       render: (r) =>
         r.agency_url ? (
-          <a href={r.agency_url} target="_blank" rel="noreferrer" className="text-xs text-[#1a5a8a] hover:underline truncate block max-w-[220px]">
+          <a href={r.agency_url} target="_blank" rel="noreferrer" className="text-xs text-[#169BA2] hover:underline truncate block max-w-[220px]">
             {r.agency_url}
           </a>
         ) : <span className="text-[#8a9aaa] text-xs">—</span> },
@@ -39,17 +39,17 @@ export function AgenciesTable({ agencies, isLoading, onEdit, sortBy, sortOrder, 
       render: (r) => (
         <div className="flex items-center justify-center gap-1">
           <button onClick={() => onEdit(r)} title="Sửa" className="h-7 w-7 rounded-md border border-[#cbd5e1] bg-white hover:bg-[#eef2f6] flex items-center justify-center cursor-pointer">
-            <Pencil size={12} className="text-[#1a5a8a]" />
+            <Pencil size={12} className="text-[#169BA2]" />
           </button>
           <button
             onClick={() => statusMut.mutate({ id: r.id, is_active: !r.is_active })}
             disabled={statusMut.isPending}
             title={r.is_active ? 'Ngưng' : 'Kích hoạt'}
             className={`h-7 w-7 rounded-md border flex items-center justify-center cursor-pointer disabled:opacity-50 ${
-              r.is_active ? 'border-[#f5b7b1] bg-white hover:bg-[#fde8e8]' : 'border-[#b8d4b0] bg-white hover:bg-[#dce8de]'
+              r.is_active ? 'border-[#f5b7b1] bg-white hover:bg-[#fde8e8]' : 'border-[#A8D5D8] bg-white hover:bg-[#E6F4F5]'
             }`}
           >
-            {r.is_active ? <PowerOff size={12} className="text-[#c0392b]" /> : <Power size={12} className="text-[#2e7d5a]" />}
+            {r.is_active ? <PowerOff size={12} className="text-[#c0392b]" /> : <Power size={12} className="text-[#169BA2]" />}
           </button>
         </div>
       ) },

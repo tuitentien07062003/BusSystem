@@ -33,7 +33,7 @@ export function SimulatorPage() {
     return (
       <div className="w-screen h-screen flex items-center justify-center bg-[#e9edf2]">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-10 w-10 border-4 border-[#1a5a8a] border-t-transparent mx-auto mb-3" />
+          <div className="animate-spin rounded-full h-10 w-10 border-4 border-[#169BA2] border-t-transparent mx-auto mb-3" />
           <p className="text-sm text-[#4a5a7a]">Đang tải dữ liệu mô phỏng...</p>
         </div>
       </div>

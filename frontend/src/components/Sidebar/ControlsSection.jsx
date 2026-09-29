@@ -35,7 +35,7 @@ export function ControlsSection() {
           value={timeAccel}
           onChange={(e) => setTimeAccel(e.target.value)}
         />
-        <span className="text-[13px] font-bold text-[#1a5a8a] min-w-[36px] text-right">
+        <span className="text-[13px] font-bold text-[#169BA2] min-w-[36px] text-right">
           {timeAccel}×
         </span>
       </div>

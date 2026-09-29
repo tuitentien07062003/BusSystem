@@ -67,7 +67,7 @@ export function AgenciesAdminPage() {
             disabled={isFetching}
             className="h-9 w-9 rounded-md border border-[#cbd5e1] bg-white hover:bg-[#eef2f6] flex items-center justify-center disabled:opacity-50 cursor-pointer"
           >
-            <RefreshCw size={14} className={isFetching ? 'animate-spin text-[#1a5a8a]' : 'text-[#4a5a7a]'} />
+            <RefreshCw size={14} className={isFetching ? 'animate-spin text-[#169BA2]' : 'text-[#4a5a7a]'} />
           </button>
         </div>
 

@@ -18,7 +18,7 @@ export function StopsEmptyState({ hasFilter, onReset }) {
       {hasFilter && (
         <button
           onClick={onReset}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-[#cbd5e1] bg-white text-xs font-semibold text-[#1a5a8a] hover:bg-[#eef2f6] cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-[#cbd5e1] bg-white text-xs font-semibold text-[#169BA2] hover:bg-[#eef2f6] cursor-pointer"
         >
           <RotateCcw size={12} />
           Xoá bộ lọc

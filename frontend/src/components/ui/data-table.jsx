@@ -18,7 +18,7 @@ export function DataTable({
   if (isLoading) {
     return (
       <div className="bg-white rounded-lg border border-[#d0d7e2] p-12 text-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-2 border-[#1a5a8a] border-t-transparent mx-auto mb-3" />
+        <div className="animate-spin rounded-full h-8 w-8 border-2 border-[#169BA2] border-t-transparent mx-auto mb-3" />
         <p className="text-sm text-[#6a7a9a]">Đang tải...</p>
       </div>
     );
@@ -78,8 +78,8 @@ export function DataTable({
                           e.stopPropagation();
                           onSort?.(col.key);
                         }}
-                        className={`inline-flex items-center gap-1 hover:text-[#1a5a8a] cursor-pointer ${
-                          isActive ? 'text-[#1a5a8a]' : ''
+                        className={`inline-flex items-center gap-1 hover:text-[#169BA2] cursor-pointer ${
+                          isActive ? 'text-[#169BA2]' : ''
                         }`}
                       >
                         {col.label}

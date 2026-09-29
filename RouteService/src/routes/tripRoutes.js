@@ -2,6 +2,8 @@ import express from "express";
 import * as c from "../controllers/tripController.js";
 
 const router = express.Router();
+router.get("/stats", c.getStatsByDate);
+
 router.get("/", c.list);
 router.post("/", c.create);
 router.get("/by-route/:routeId", c.byRoute);

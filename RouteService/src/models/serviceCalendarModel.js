@@ -13,10 +13,19 @@ const ServiceCalendar = sequelize.define(
     friday: { type: DataTypes.BOOLEAN, defaultValue: false },
     saturday: { type: DataTypes.BOOLEAN, defaultValue: false },
     sunday: { type: DataTypes.BOOLEAN, defaultValue: false },
+    headway_multiplier: {
+      type: DataTypes.DECIMAL(3, 2),
+      allowNull: true,
+      defaultValue: 1.0,
+      validate: {
+        min: 0.1,
+        max: 5.0,
+      },
+    },
     start_date: { type: DataTypes.DATEONLY, allowNull: false },
     end_date: { type: DataTypes.DATEONLY, allowNull: false },
   },
-  { tableName: "service_calendars", timestamps: false }
+  { tableName: "service_calendars", timestamps: false },
 );
 
 export default ServiceCalendar;

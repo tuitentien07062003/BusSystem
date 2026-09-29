@@ -8,10 +8,10 @@ export function Checkbox({ className, checked, ...props }) {
       checked={checked}
       className={cn(
         'peer h-4 w-4 shrink-0 rounded border border-[#cbd5e1] bg-white',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5fc3e4]/40',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#169BA2]/40',
         'disabled:cursor-not-allowed disabled:opacity-50',
-        'data-[state=checked]:bg-[#1a5a8a] data-[state=checked]:border-[#1a5a8a]',
-        'data-[state=indeterminate]:bg-[#1a5a8a] data-[state=indeterminate]:border-[#1a5a8a]',
+        'data-[state=checked]:bg-[#169BA2] data-[state=checked]:border-[#169BA2]',
+        'data-[state=indeterminate]:bg-[#169BA2] data-[state=indeterminate]:border-[#169BA2]',
         'transition-colors cursor-pointer flex items-center justify-center',
         className
       )}

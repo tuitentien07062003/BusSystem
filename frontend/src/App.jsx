@@ -1,16 +1,16 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { Toaster } from 'sonner';
-import { TooltipProvider } from '@/components/ui/tooltip';
-import { SimulationProvider } from '@/context/SimulationContext';
-import { SimulatorPage } from '@/pages/SimulatorPage';
-import { AdminLayout } from '@/admin/layouts/AdminLayout';
-import { StopsAdminPage } from '@/admin/pages/StopsAdminPage';
-import { AgenciesAdminPage } from '@/admin/pages/AgenciesAdminPage';
-import { RoutesAdminPage } from '@/admin/pages/RoutesAdminPage';
-import { CalendarsAdminPage } from '@/admin/pages/CalendarsAdminPage';
-import { TripsAdminPage } from '@/admin/pages/TripsAdminPage';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { Toaster } from "sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { SimulationProvider } from "@/context/SimulationContext";
+import { SimulatorPage } from "@/pages/SimulatorPage";
+import { AdminLayout } from "@/admin/layouts/AdminLayout";
+import { StopsAdminPage } from "@/admin/pages/StopsAdminPage";
+import { RoutesAdminPage } from "@/admin/pages/RoutesAdminPage";
+import { CalendarsAdminPage } from "@/admin/pages/CalendarsAdminPage";
+import { TripsAdminPage } from "@/admin/pages/TripsAdminPage";
+import { OrganizationPage } from "@/admin/pages/OrganizationPage";
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { refetchOnWindowFocus: false, retry: 1 } },
@@ -32,7 +32,7 @@ export default function App() {
                 <Route path="routes" element={<RoutesAdminPage />} />
                 <Route path="trips" element={<TripsAdminPage />} />
                 <Route path="calendars" element={<CalendarsAdminPage />} />
-                <Route path="agencies" element={<AgenciesAdminPage />} />
+                <Route path="organization" element={<OrganizationPage />} />
               </Route>
 
               <Route path="*" element={<Navigate to="/" replace />} />

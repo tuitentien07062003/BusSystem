@@ -202,7 +202,7 @@ export function StopEditDialog({ stop, open, onOpenChange }) {
             <button
               type="button"
               onClick={() => setShowMap((v) => !v)}
-              className="text-[11px] font-semibold text-[#1a5a8a] hover:text-[#0d3d6a] cursor-pointer"
+              className="text-[11px] font-semibold text-[#169BA2] hover:text-[#0F7075] cursor-pointer"
             >
               {showMap ? 'Ẩn bản đồ' : 'Hiện bản đồ'}
             </button>

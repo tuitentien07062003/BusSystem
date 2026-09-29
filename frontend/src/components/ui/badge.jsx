@@ -1,9 +1,9 @@
 import { cn } from '@/lib/utils';
 
 const VARIANTS = {
-  success: 'bg-[#dce8de] text-[#2e7d5a] border-[#b8d4b0]',
+  success: 'bg-[#E6F4F5] text-[#169BA2] border-[#A8D5D8]',
   danger: 'bg-[#fde8e8] text-[#c0392b] border-[#f5b7b1]',
-  info: 'bg-[#dce8f0] text-[#1a5a8a] border-[#a8c8e8]',
+  info: 'bg-[#E6F4F5] text-[#169BA2] border-[#A8D5D8]',
   muted: 'bg-[#eef2f6] text-[#6a7a9a] border-[#d0d7e2]',
   warning: 'bg-[#fdf2e3] text-[#d48c2c] border-[#f5d7a1]',
 };

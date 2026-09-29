@@ -8,8 +8,8 @@ export function ClockSection() {
   return (
     <div className="flex gap-2 items-center px-3.5 py-2 bg-white border-b border-[#d0d7e2]">
       <div className="flex-1 flex items-center justify-center gap-2 bg-[#eef2f6] border border-[#d0d7e2] rounded-md px-3 py-1.5">
-        <Clock size={14} className="text-[#1a5a8a]" />
-        <span className="text-sm font-bold text-[#1a5a8a] tracking-wide">
+        <Clock size={14} className="text-[#169BA2]" />
+        <span className="text-sm font-bold text-[#169BA2] tracking-wide">
           {clockText}
         </span>
       </div>

@@ -11,7 +11,12 @@ function toPlain(r) {
   return r.get ? r.get({ plain: true }) : r;
 }
 
-export async function getAllRoutes({ page = 1, limit = 20, is_active, keyword = "" } = {}) {
+export async function getAllRoutes({
+  page = 1,
+  limit = 20,
+  is_active,
+  keyword = "",
+} = {}) {
   page = Math.max(1, parseInt(page) || 1);
   limit = Math.min(Math.max(1, parseInt(limit) || 20), 200);
   const offset = (page - 1) * limit;
@@ -26,14 +31,27 @@ export async function getAllRoutes({ page = 1, limit = 20, is_active, keyword = 
     ];
   }
   const { count, rows } = await Route.findAndCountAll({
-    where, limit, offset, order: [["id", "ASC"]],
+    where,
+    limit,
+    offset,
+    order: [["id", "ASC"]],
   });
-  return { total: count, page, limit, totalPages: Math.ceil(count / limit), data: rows.map(toPlain) };
+  return {
+    total: count,
+    page,
+    limit,
+    totalPages: Math.ceil(count / limit),
+    data: rows.map(toPlain),
+  };
 }
 
 export async function getRouteById(id) {
   const r = await Route.findByPk(id);
-  if (!r) { const e = new Error("Không tìm thấy tuyến."); e.status = 404; throw e; }
+  if (!r) {
+    const e = new Error("Không tìm thấy tuyến.");
+    e.status = 404;
+    throw e;
+  }
   return toPlain(r);
 }
 
@@ -42,7 +60,11 @@ export async function getRouteById(id) {
 // ═══════════════════════════════════════════════════════════════
 export async function getFullRoute(routeId) {
   const route = await Route.findByPk(routeId);
-  if (!route) { const e = new Error("Không tìm thấy tuyến."); e.status = 404; throw e; }
+  if (!route) {
+    const e = new Error("Không tìm thấy tuyến.");
+    e.status = 404;
+    throw e;
+  }
 
   const patterns = await TripPattern.findAll({
     where: { route_id: routeId },
@@ -88,8 +110,14 @@ export async function getFullRoute(routeId) {
     const stopIds = stopTimes.map((st) => st.stop_id).filter(Boolean);
     let stopsMap = new Map();
     if (stopIds.length > 0) {
+      const stopIdStrings = stopIds.map(String);
       const stops = await Stop.findAll({
-        where: { id: { [Op.in]: stopIds } },
+        where: {
+          [Op.or]: [
+            { id: { [Op.in]: stopIds } },
+            { stop_id: { [Op.in]: stopIdStrings } },
+          ],
+        },
         attributes: {
           include: [
             [sequelize.fn("ST_X", sequelize.col("geom")), "longitude"],
@@ -97,17 +125,21 @@ export async function getFullRoute(routeId) {
           ],
         },
       });
-      stopsMap = new Map(stops.map((s) => {
+
+      stopsMap = new Map();
+      for (const s of stops) {
         const o = s.get({ plain: true });
-        return [o.id, {
+        const info = {
           id: o.id,
           stop_id: o.stop_id,
           stop_name: o.stop_name,
           latitude: parseFloat(o.latitude),
           longitude: parseFloat(o.longitude),
           stop_type: o.stop_type,
-        }];
-      }));
+        };
+        stopsMap.set(o.id, info);
+        stopsMap.set(String(o.stop_id), info);
+      }
     }
 
     result.patterns.push({
@@ -118,7 +150,8 @@ export async function getFullRoute(routeId) {
       shape_id: p.shape_id,
       shape,
       stops: stopTimes.map((st) => {
-        const info = stopsMap.get(st.stop_id) || {};
+        const info =
+          stopsMap.get(st.stop_id) || stopsMap.get(String(st.stop_id)) || {};
         return {
           ...info,
           stop_sequence: st.stop_sequence,
@@ -133,13 +166,29 @@ export async function getFullRoute(routeId) {
 }
 
 export async function createRoute(payload = {}) {
-  const { route_id, agency_id, route_short_name, route_full_name, route_color, is_active } = payload;
+  const {
+    route_id,
+    agency_id,
+    route_short_name,
+    route_full_name,
+    route_color,
+    is_active,
+  } = payload;
   if (!route_id || !route_short_name || !route_full_name) {
-    const e = new Error("route_id, route_short_name, route_full_name là bắt buộc.");
-    e.status = 400; throw e;
+    const e = new Error(
+      "route_id, route_short_name, route_full_name là bắt buộc.",
+    );
+    e.status = 400;
+    throw e;
   }
-  const dup = await Route.findOne({ where: { route_id: String(route_id).trim() } });
-  if (dup) { const e = new Error(`route_id "${route_id}" đã tồn tại.`); e.status = 409; throw e; }
+  const dup = await Route.findOne({
+    where: { route_id: String(route_id).trim() },
+  });
+  if (dup) {
+    const e = new Error(`route_id "${route_id}" đã tồn tại.`);
+    e.status = 409;
+    throw e;
+  }
   const now = new Date();
   const created = await Route.create({
     route_id: String(route_id).trim(),
@@ -156,21 +205,37 @@ export async function createRoute(payload = {}) {
 
 export async function updateRoute(id, payload = {}) {
   const r = await Route.findByPk(id);
-  if (!r) { const e = new Error("Không tìm thấy tuyến."); e.status = 404; throw e; }
+  if (!r) {
+    const e = new Error("Không tìm thấy tuyến.");
+    e.status = 404;
+    throw e;
+  }
   const updates = {};
-  ["agency_id", "route_short_name", "route_full_name", "route_color", "is_active"].forEach((k) => {
+  [
+    "agency_id",
+    "route_short_name",
+    "route_full_name",
+    "route_color",
+    "is_active",
+  ].forEach((k) => {
     if (payload[k] !== undefined) updates[k] = payload[k];
   });
   if (payload.route_id !== undefined) {
     const v = String(payload.route_id).trim();
     if (v !== r.route_id) {
       const dup = await Route.findOne({ where: { route_id: v } });
-      if (dup) { const e = new Error(`route_id "${v}" đã tồn tại.`); e.status = 409; throw e; }
+      if (dup) {
+        const e = new Error(`route_id "${v}" đã tồn tại.`);
+        e.status = 409;
+        throw e;
+      }
     }
     updates.route_id = v;
   }
   if (Object.keys(updates).length === 0) {
-    const e = new Error("Không có trường nào để cập nhật."); e.status = 400; throw e;
+    const e = new Error("Không có trường nào để cập nhật.");
+    e.status = 400;
+    throw e;
   }
   updates.updated_at = new Date();
   await r.update(updates);
@@ -179,10 +244,16 @@ export async function updateRoute(id, payload = {}) {
 
 export async function changeRouteStatus(id, is_active) {
   if (typeof is_active !== "boolean") {
-    const e = new Error("is_active phải là boolean."); e.status = 400; throw e;
+    const e = new Error("is_active phải là boolean.");
+    e.status = 400;
+    throw e;
   }
   const r = await Route.findByPk(id);
-  if (!r) { const e = new Error("Không tìm thấy tuyến."); e.status = 404; throw e; }
+  if (!r) {
+    const e = new Error("Không tìm thấy tuyến.");
+    e.status = 404;
+    throw e;
+  }
   r.is_active = is_active;
   r.updated_at = new Date();
   await r.save();

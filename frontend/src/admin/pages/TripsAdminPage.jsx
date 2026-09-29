@@ -1,81 +1,365 @@
-import { useState, useEffect, useMemo } from 'react';
-import { Plus, Search, RefreshCw } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { PageHeader } from '../components/PageHeader';
-import { TripsTable } from '../components/trips/TripsTable';
-import { TripFormDialog } from '../components/trips/TripFormDialog';
-import { useTripsList } from '@/hooks/useTrips';
+// src/admin/pages/TripsAdminPage.jsx
+// Trang Dispatch Center — quản lý và điều hành chuyến xe
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { Plus, Sparkles, XCircle, BarChart3, ListOrdered } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
+import { PageHeader } from "../components/PageHeader";
+import { TripKpiCards } from "../components/trips/TripKpiCards";
+import { TripFilterBar } from "../components/trips/TripFilterBar";
+import { TripTimelineView } from "../components/trips/TripTimelineView";
+import { TripDetailDrawer } from "../components/trips/TripDetailDrawer";
+import { TripsTable } from "../components/trips/TripsTable";
+import { TripFormDialog } from "../components/trips/TripFormDialog";
+import {
+  useTripsList,
+  useTripsStatsByDate,
+  useChangeTripStatus,
+} from "@/hooks/useTrips";
+import { useRoutesList } from "@/hooks/useRoutes";
+import { useFullRoute } from "@/hooks/useRoutes";
 
+// ═══════════════════════════════════════════════════════════════
+// Helpers
+// ═══════════════════════════════════════════════════════════════
+function today() {
+  const d = new Date();
+  const p = (n) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+}
+
+const PAGE_SIZE = 30;
+
+// ═══════════════════════════════════════════════════════════════
+// MAIN PAGE
+// ═══════════════════════════════════════════════════════════════
 export function TripsAdminPage() {
-  const [page, setPage] = useState(1);
-  const [searchInput, setSearchInput] = useState('');
-  const [keyword, setKeyword] = useState('');
-  const [sortBy, setSortBy] = useState('id');
-  const [sortOrder, setSortOrder] = useState('asc');
-  const [editing, setEditing] = useState(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
+  // ─── Filter state ───
+  const [date, setDate] = useState(today());
+  const [routeId, setRouteId] = useState("all");
+  const [directionId, setDirectionId] = useState("all");
+  const [status, setStatus] = useState("all");
+  const [searchInput, setSearchInput] = useState("");
+  const [keyword, setKeyword] = useState("");
 
+  // ─── View mode ───
+  const [viewMode, setViewMode] = useState("timeline"); // 'timeline' | 'table'
+
+  // ─── Selection / Dialog ───
+  const [selectedTrip, setSelectedTrip] = useState(null); // mở Drawer
+  const [editingTrip, setEditingTrip] = useState(null); // mở Form
+  const [formOpen, setFormOpen] = useState(false);
+  const [bulkSelectedIds, setBulkSelectedIds] = useState(new Set());
+
+  // ─── Sort (chỉ dùng cho Table) ───
+  const [sortBy, setSortBy] = useState("start_time");
+  const [sortOrder, setSortOrder] = useState("asc");
+
+  // ─── Debounce search ───
   useEffect(() => {
-    const t = setTimeout(() => { setKeyword(searchInput); setPage(1); }, 250);
+    const t = setTimeout(() => setKeyword(searchInput), 300);
     return () => clearTimeout(t);
   }, [searchInput]);
 
-  const { data, isLoading, isFetching, refetch } = useTripsList({ page, limit: 20, q: keyword });
-  const rawData = data?.data ?? [];
-  const total = data?.total ?? 0;
-  const totalPages = data?.totalPages ?? 1;
+  // ═══════════════════════════════════════════════════════════════
+  // DATA
+  // ═══════════════════════════════════════════════════════════════
 
-  const trips = useMemo(() => {
-    const list = [...rawData];
+  // Routes (cho filter)
+  const { data: routesData } = useRoutesList({ page: 1, limit: 200 });
+  const routes = routesData?.data || [];
+
+  // KPI stats
+  const { data: statsData, isLoading: loadingStats } = useTripsStatsByDate(
+    date,
+    routeId === "all" ? undefined : routeId,
+  );
+
+  // Trips list (dùng cho cả Timeline và Table)
+  const {
+    data: tripsData,
+    isLoading,
+    isFetching,
+    refetch,
+  } = useTripsList({
+    page: 1,
+    limit: 500, // load nhiều hơn cho Timeline
+    route_id: routeId === "all" ? undefined : routeId,
+    is_active: undefined,
+    q: keyword,
+  });
+
+  const rawTrips = tripsData?.data ?? [];
+
+  // ═══════════════════════════════════════════════════════════════
+  // CLIENT-SIDE FILTER (theo direction + status + date)
+  // ═══════════════════════════════════════════════════════════════
+  const filteredTrips = useMemo(() => {
+    let list = [...rawTrips];
+
+    // Filter direction
+    if (directionId !== "all") {
+      const d = parseInt(directionId);
+      list = list.filter((t) => t.direction_id === d);
+    }
+
+    // Filter status
+    if (status === "cancelled") {
+      list = list.filter((t) => t.is_active === false);
+    } else if (status !== "all") {
+      // scheduled / in_progress / completed: filter theo thời gian
+      const isToday = date === today();
+      const now = new Date();
+      const nowMin = now.getHours() * 60 + now.getMinutes();
+
+      list = list.filter((t) => {
+        if (t.is_active === false) return false;
+        const [h, m] = String(t.start_time).split(":").map(Number);
+        const startMin = h * 60 + m;
+        const travelMin = Math.round((t.travel_time_sec || 3600) / 60);
+        const endMin = startMin + travelMin;
+
+        if (!isToday) return status === "scheduled";
+        if (status === "scheduled") return nowMin < startMin;
+        if (status === "in_progress")
+          return nowMin >= startMin && nowMin < endMin;
+        if (status === "completed") return nowMin >= endMin;
+        return true;
+      });
+    }
+
+    // Sort
     list.sort((a, b) => {
-      const av = a[sortBy], bv = b[sortBy];
+      const av = a[sortBy];
+      const bv = b[sortBy];
       if (av == null) return 1;
       if (bv == null) return -1;
-      if (typeof av === 'string') return sortOrder === 'asc' ? av.localeCompare(bv, 'vi') : bv.localeCompare(av, 'vi');
-      return sortOrder === 'asc' ? av - bv : bv - av;
+      if (typeof av === "string") {
+        return sortOrder === "asc"
+          ? av.localeCompare(bv, "vi")
+          : bv.localeCompare(av, "vi");
+      }
+      return sortOrder === "asc" ? av - bv : bv - av;
     });
+
     return list;
-  }, [rawData, sortBy, sortOrder]);
+  }, [rawTrips, directionId, status, date, sortBy, sortOrder]);
+
+  // ═══════════════════════════════════════════════════════════════
+  // HANDLERS
+  // ═══════════════════════════════════════════════════════════════
 
   const handleSort = (field) => {
-    if (sortBy === field) setSortOrder((o) => (o === 'asc' ? 'desc' : 'asc'));
-    else { setSortBy(field); setSortOrder('asc'); }
+    if (sortBy === field) {
+      setSortOrder((o) => (o === "asc" ? "desc" : "asc"));
+    } else {
+      setSortBy(field);
+      setSortOrder("asc");
+    }
   };
 
+  const handleSelectTrip = (trip) => {
+    setSelectedTrip(trip);
+  };
+
+  const handleEditTrip = (trip) => {
+    setEditingTrip(trip);
+    setFormOpen(true);
+  };
+
+  const handleCloseForm = () => {
+    setFormOpen(false);
+    setEditingTrip(null);
+  };
+
+  const handleOpenCreate = () => {
+    setEditingTrip(null);
+    setFormOpen(true);
+  };
+
+  const handleBulkCancel = async () => {
+    if (bulkSelectedIds.size === 0) {
+      toast.warning("Chưa chọn chuyến nào");
+      return;
+    }
+    if (!confirm(`Hủy ${bulkSelectedIds.size} chuyến đã chọn?`)) return;
+    toast.info("Chức năng đang phát triển");
+    setBulkSelectedIds(new Set());
+  };
+
+  // ═══════════════════════════════════════════════════════════════
+  // DATA cho Drawer
+  // ═══════════════════════════════════════════════════════════════
+  const { data: fullRouteData } = useFullRoute(selectedTrip?.route_id ?? null, {
+    enabled: !!selectedTrip?.route_id,
+  });
+
+  const drawerStopTimes = useMemo(() => {
+    if (!selectedTrip || !fullRouteData?.patterns) return [];
+    const pattern = fullRouteData.patterns.find(
+      (p) => p.direction_id === selectedTrip.direction_id,
+    );
+    return pattern?.stops || [];
+  }, [selectedTrip, fullRouteData]);
+
+  const drawerShape = useMemo(() => {
+    if (!selectedTrip || !fullRouteData?.patterns) return null;
+    const pattern = fullRouteData.patterns.find(
+      (p) => p.direction_id === selectedTrip.direction_id,
+    );
+    return pattern?.shape || null;
+  }, [selectedTrip, fullRouteData]);
+
+  const drawerStops = useMemo(() => {
+    if (!selectedTrip || !fullRouteData?.patterns) return [];
+    const pattern = fullRouteData.patterns.find(
+      (p) => p.direction_id === selectedTrip.direction_id,
+    );
+    return (pattern?.stops || []).map((s) => ({
+      stop_id: s.stop_id,
+      stop_name: s.stop_name,
+      latitude: s.latitude,
+      longitude: s.longitude,
+      stop_type: s.stop_type,
+    }));
+  }, [selectedTrip, fullRouteData]);
+
+  // ═══════════════════════════════════════════════════════════════
+  // RENDER
+  // ═══════════════════════════════════════════════════════════════
   return (
-    <div className="h-full overflow-y-auto bg-[#eef2f6]">
-      <div className="max-w-[1400px] mx-auto px-6 py-6 space-y-4">
-        <PageHeader title="Chuyến xe" description="Quản lý các chuyến cụ thể theo pattern và lịch phục vụ.">
-          <Button variant="primary" onClick={() => { setEditing(null); setDialogOpen(true); }}>
-            <Plus size={14} /> Thêm chuyến
-          </Button>
+    <div className="h-full overflow-y-auto bg-[#EEF2F6] scrollbar-thin">
+      <div className="max-w-[1600px] mx-auto px-6 py-5 space-y-4">
+        {/* ═══════════ PAGE HEADER ═══════════ */}
+        <PageHeader
+          title="Trung tâm điều hành chuyến xe"
+          description="Theo dõi, điều chỉnh và quản lý lịch chạy theo thời gian thực"
+        >
+          <div className="flex items-center gap-2">
+            <Button
+              variant="secondary"
+              onClick={handleBulkCancel}
+              disabled={bulkSelectedIds.size === 0}
+              className="border-[#FFC8C8] text-[#C62828] hover:bg-[#FEF2F2]"
+            >
+              <XCircle size={13} />
+              Hủy hàng loạt
+              {bulkSelectedIds.size > 0 && (
+                <Badge variant="danger" className="ml-1 text-[10px]">
+                  {bulkSelectedIds.size}
+                </Badge>
+              )}
+            </Button>
+
+            <Button
+              variant="outline"
+              onClick={handleOpenCreate}
+              className="border-[#169BA2] text-[#169BA2] hover:bg-[#E6F4F5]"
+            >
+              <Plus size={13} />
+              Thêm chuyến gấp
+            </Button>
+          </div>
         </PageHeader>
 
-        <div className="bg-white rounded-lg border border-[#d0d7e2] p-3 flex gap-2">
-          <div className="relative flex-1">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8a9aaa]" />
-            <Input placeholder="Tìm theo mã chuyến..." value={searchInput} onChange={(e) => setSearchInput(e.target.value)} className="pl-8" />
+        {/* ═══════════ KPI CARDS ═══════════ */}
+        <TripKpiCards stats={statsData} isLoading={loadingStats} />
+
+        {/* ═══════════ FILTER BAR ═══════════ */}
+        <TripFilterBar
+          date={date}
+          routeId={routeId}
+          directionId={directionId}
+          status={status}
+          searchInput={searchInput}
+          onDateChange={setDate}
+          onRouteChange={setRouteId}
+          onDirectionChange={setDirectionId}
+          onStatusChange={setStatus}
+          onSearchChange={setSearchInput}
+          routes={routes}
+          onRefresh={refetch}
+          isFetching={isFetching}
+        />
+
+        {/* ═══════════ VIEW MODE SWITCH ═══════════ */}
+        <div className="flex items-center justify-between">
+          <div className="inline-flex items-center bg-white rounded-lg border border-[#E5EAF0] p-1">
+            <button
+              type="button"
+              onClick={() => setViewMode("timeline")}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-colors cursor-pointer ${
+                viewMode === "timeline"
+                  ? "bg-[#169BA2] text-white shadow-sm"
+                  : "text-[#6A7A9A] hover:bg-[#F8FAFC]"
+              }`}
+            >
+              <BarChart3 size={13} />
+              Biểu đồ Timeline
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode("table")}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-colors cursor-pointer ${
+                viewMode === "table"
+                  ? "bg-[#169BA2] text-white shadow-sm"
+                  : "text-[#6A7A9A] hover:bg-[#F8FAFC]"
+              }`}
+            >
+              <ListOrdered size={13} />
+              Bảng danh sách
+            </button>
           </div>
-          <button onClick={refetch} disabled={isFetching} className="h-9 w-9 rounded-md border border-[#cbd5e1] bg-white hover:bg-[#eef2f6] flex items-center justify-center disabled:opacity-50 cursor-pointer">
-            <RefreshCw size={14} className={isFetching ? 'animate-spin text-[#1a5a8a]' : 'text-[#4a5a7a]'} />
-          </button>
+
+          <div className="text-xs text-[#6A7A9A]">
+            Hiển thị <b className="text-[#1A2332]">{filteredTrips.length}</b>{" "}
+            chuyến
+          </div>
         </div>
 
-        <TripsTable trips={trips} isLoading={isLoading} onEdit={(r) => { setEditing(r); setDialogOpen(true); }} sortBy={sortBy} sortOrder={sortOrder} onSort={handleSort} />
-
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between text-xs text-[#6a7a9a]">
-            <span>Trang <b className="text-[#1a2332]">{page}</b> / {totalPages} · Tổng <b className="text-[#1a2332]">{total}</b></span>
-            <div className="flex gap-2">
-              <button onClick={() => setPage((p) => p - 1)} disabled={page <= 1} className="h-8 px-3 rounded-md border border-[#cbd5e1] bg-white text-xs font-semibold disabled:opacity-40 cursor-pointer">Trước</button>
-              <button onClick={() => setPage((p) => p + 1)} disabled={page >= totalPages} className="h-8 px-3 rounded-md border border-[#cbd5e1] bg-white text-xs font-semibold disabled:opacity-40 cursor-pointer">Sau</button>
-            </div>
-          </div>
+        {/* ═══════════ MAIN VIEW ═══════════ */}
+        {viewMode === "timeline" ? (
+          <TripTimelineView
+            trips={filteredTrips}
+            routes={routes}
+            date={date}
+            onSelectTrip={handleSelectTrip}
+          />
+        ) : (
+          <TripsTable
+            trips={filteredTrips}
+            isLoading={isLoading}
+            onEdit={handleEditTrip}
+            onSelect={handleSelectTrip}
+            sortBy={sortBy}
+            sortOrder={sortOrder}
+            onSort={handleSort}
+          />
         )}
-
-        <TripFormDialog trip={editing} open={dialogOpen} onOpenChange={(v) => { setDialogOpen(v); if (!v) setEditing(null); }} />
       </div>
+
+      {/* ═══════════ DRAWER — Chi tiết chuyến ═══════════ */}
+      <TripDetailDrawer
+        open={!!selectedTrip}
+        trip={selectedTrip}
+        onClose={() => setSelectedTrip(null)}
+        stopTimes={drawerStopTimes}
+        routeShape={drawerShape}
+        routeStops={drawerStops}
+        isLoadingStops={!fullRouteData && !!selectedTrip?.route_id}
+        isLoadingShape={!fullRouteData && !!selectedTrip?.route_id}
+      />
+
+      {/* ═══════════ DIALOG — Sửa / tạo chuyến ═══════════ */}
+      <TripFormDialog
+        trip={editingTrip}
+        open={formOpen}
+        onOpenChange={(v) => {
+          setFormOpen(v);
+          if (!v) setEditingTrip(null);
+        }}
+      />
     </div>
   );
 }

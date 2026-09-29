@@ -4,8 +4,8 @@ import { useRouteStats } from '@/hooks/useRoutes';
 export function RouteStats() {
   const { data, isLoading } = useRouteStats();
   const items = [
-    { key: 'total', label: 'Tổng số tuyến', value: data?.total, icon: RouteIcon, color: 'text-[#1a5a8a] bg-[#dce8f0]' },
-    { key: 'active', label: 'Đang hoạt động', value: data?.active, icon: CheckCircle2, color: 'text-[#2e7d5a] bg-[#dce8de]' },
+    { key: 'total', label: 'Tổng số tuyến', value: data?.total, icon: RouteIcon, color: 'text-[#169BA2] bg-[#E6F4F5]' },
+    { key: 'active', label: 'Đang hoạt động', value: data?.active, icon: CheckCircle2, color: 'text-[#169BA2] bg-[#E6F4F5]' },
     { key: 'inactive', label: 'Ngưng hoạt động', value: data?.inactive, icon: XCircle, color: 'text-[#c0392b] bg-[#fde8e8]' },
   ];
   return (

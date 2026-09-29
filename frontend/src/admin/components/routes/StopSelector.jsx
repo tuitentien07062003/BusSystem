@@ -77,7 +77,7 @@ export function StopSelector({
           {isLoading && (
             <Loader2
               size={12}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#1a5a8a] animate-spin"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#169BA2] animate-spin"
             />
           )}
         </div>
@@ -91,7 +91,7 @@ export function StopSelector({
       <div className="max-h-[320px] overflow-y-auto scrollbar-thin">
         {!hasKeyword && selectedOnly.length > 0 && (
           <>
-            <div className="px-3 py-1.5 bg-[#f0f7fc] text-[10px] font-bold uppercase tracking-wider text-[#1a5a8a] border-b border-[#e5eaf0] sticky top-0 z-10">
+            <div className="px-3 py-1.5 bg-[#f0f7fc] text-[10px] font-bold uppercase tracking-wider text-[#169BA2] border-b border-[#e5eaf0] sticky top-0 z-10">
               Đã chọn ({selectedOnly.length})
             </div>
             {selectedOnly.map((s) => (
@@ -149,7 +149,7 @@ function StopRow({ stop, checked, hovered, focused, onClick, onHover }) {
         <div className="text-[10px] text-[#8a9aaa] font-mono">{stop.stop_id}</div>
       </div>
       {hovered && !checked && <MapPin size={12} className="text-[#d48c2c] flex-shrink-0" />}
-      {checked && !hovered && <Check size={13} className="text-[#1a5a8a] flex-shrink-0" />}
+      {checked && !hovered && <Check size={13} className="text-[#169BA2] flex-shrink-0" />}
     </div>
   );
 }

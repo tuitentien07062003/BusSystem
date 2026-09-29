@@ -26,7 +26,7 @@ export function BusListSection() {
         </span>
         <span
           onClick={clearTrack}
-          className="text-[10px] text-[#1a5a8a] cursor-pointer hover:text-[#0d3d6a]"
+          className="text-[10px] text-[#169BA2] cursor-pointer hover:text-[#0F7075]"
         >
           Bỏ theo dõi
         </span>
@@ -51,7 +51,7 @@ export function BusListSection() {
               onClick={() => toggleTrackBus(bus.trip_id)}
               className={`flex items-center gap-2 px-2.5 py-1.5 mb-0.5 rounded-md text-xs cursor-pointer transition-colors border ${
                 isTracked
-                  ? "bg-[#dce8f0] border-[#8ab3d0]"
+                  ? "bg-[#E6F4F5] border-[#8ab3d0]"
                   : "bg-white border-transparent hover:bg-[#eef2f6]"
               }`}
             >
@@ -62,7 +62,7 @@ export function BusListSection() {
               <span
                 className={`font-semibold min-w-[80px] ${
                   bus.status === "running"
-                    ? "text-[#2e7d5a]"
+                    ? "text-[#169BA2]"
                     : bus.status === "stopped"
                       ? "text-[#d48c2c]"
                       : bus.status === "waiting"
@@ -79,7 +79,7 @@ export function BusListSection() {
               >
                 {displayStatus}
               </span>
-              <span className="text-[11px] text-[#1a5a8a] whitespace-nowrap">
+              <span className="text-[11px] text-[#169BA2] whitespace-nowrap">
                 {bus.timeStr}
               </span>
             </div>

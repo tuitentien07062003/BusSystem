@@ -96,7 +96,7 @@ export function StopsFilters({
       >
         <RefreshCw
           size={14}
-          className={isFetching ? 'animate-spin text-[#1a5a8a]' : 'text-[#4a5a7a]'}
+          className={isFetching ? 'animate-spin text-[#169BA2]' : 'text-[#4a5a7a]'}
         />
       </button>
     </div>

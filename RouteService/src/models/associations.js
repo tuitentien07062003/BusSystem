@@ -1,6 +1,3 @@
-// src/models/associations.js
-// Tập trung khai báo TẤT CẢ quan hệ giữa các model.
-// Import file này 1 lần duy nhất trong src/server.js (sau khi import sequelize).
 import Agency from "./agencyModel.js";
 import Route from "./routeModel.js";
 import TripPattern from "./tripPatternModel.js";
@@ -9,6 +6,9 @@ import Stop from "./stopModel.js";
 import StopTimePattern from "./stopTimePatternModel.js";
 import Trip from "./tripModel.js";
 import ServiceCalendar from "./serviceCalendarModel.js";
+import RouteOperation from "./routeOperationModel.js";
+import RouteStatsCache from "./routeStatsCacheModel.js";
+import HeadwayConfig from "./headwayConfigModel.js";
 
 // ═══════════════════════════════════════════════════════════════
 // 1. agencies (1) ──< (N) routes
@@ -106,8 +106,8 @@ Trip.belongsTo(ServiceCalendar, {
 //    Sequelize cần chỉ rõ sourceKey & targetKey.
 // ═══════════════════════════════════════════════════════════════
 TripPattern.hasMany(Shape, {
-  foreignKey: "shape_id",       // khóa ngoại nằm ở bảng shapes
-  sourceKey: "shape_id",        // khóa nguồn ở trip_patterns
+  foreignKey: "shape_id", // khóa ngoại nằm ở bảng shapes
+  sourceKey: "shape_id", // khóa nguồn ở trip_patterns
   as: "shape_points",
   onDelete: "CASCADE",
   onUpdate: "CASCADE",
@@ -116,6 +116,51 @@ Shape.belongsTo(TripPattern, {
   foreignKey: "shape_id",
   targetKey: "shape_id",
   as: "pattern",
+});
+
+// ═══════════════════════════════════════════════════════════════
+// 8. routes (1) ── (1) route_operations
+//    route_operations.route_id → routes.id  (PK + FK)
+// ═══════════════════════════════════════════════════════════════
+Route.hasOne(RouteOperation, {
+  foreignKey: "route_id",
+  as: "operations",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+RouteOperation.belongsTo(Route, {
+  foreignKey: "route_id",
+  as: "route",
+});
+
+// ═══════════════════════════════════════════════════════════════
+// 9. routes (1) ── (1) route_stats_cache
+//    route_stats_cache.route_id → routes.id  (PK + FK)
+// ═══════════════════════════════════════════════════════════════
+Route.hasOne(RouteStatsCache, {
+  foreignKey: "route_id",
+  as: "stats_cache",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+RouteStatsCache.belongsTo(Route, {
+  foreignKey: "route_id",
+  as: "route",
+});
+
+// ═══════════════════════════════════════════════════════════════
+// 10. routes (1) ──< (N) headway_configs
+//     headway_configs.route_id → routes.id
+// ═══════════════════════════════════════════════════════════════
+Route.hasMany(HeadwayConfig, {
+  foreignKey: "route_id",
+  as: "headway_configs",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+HeadwayConfig.belongsTo(Route, {
+  foreignKey: "route_id",
+  as: "route",
 });
 
 // ═══════════════════════════════════════════════════════════════
@@ -130,4 +175,7 @@ export {
   StopTimePattern,
   Trip,
   ServiceCalendar,
+  RouteOperation,
+  RouteStatsCache,
+  HeadwayConfig,
 };

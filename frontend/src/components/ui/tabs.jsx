@@ -42,7 +42,7 @@ export function TabsTrigger({ value, className, children }) {
       className={cn(
         'inline-flex items-center justify-center whitespace-nowrap rounded px-3 py-1 text-xs font-semibold transition-all cursor-pointer',
         isActive
-          ? 'bg-white text-[#1a5a8a] shadow-sm'
+          ? 'bg-white text-[#169BA2] shadow-sm'
           : 'text-[#6a7a9a] hover:text-[#1a2332]',
         className
       )}

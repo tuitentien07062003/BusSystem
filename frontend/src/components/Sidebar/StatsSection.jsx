@@ -8,7 +8,7 @@ export function StatsSection() {
       key: "running",
       label: "Đang chạy",
       value: stats.running,
-      color: "text-[#2e7d5a]",
+      color: "text-[#169BA2]",
     },
     {
       key: "stopped",

@@ -34,7 +34,7 @@ export function RoutesTable({
             e.stopPropagation();
             onView?.(r);
           }}
-          className="font-mono text-xs text-[#1a5a8a] font-semibold hover:underline cursor-pointer"
+          className="font-mono text-xs text-[#169BA2] font-semibold hover:underline cursor-pointer"
         >
           {r.route_id}
         </button>
@@ -51,7 +51,7 @@ export function RoutesTable({
             e.stopPropagation();
             onView?.(r);
           }}
-          className="font-medium text-[#1a2332] hover:text-[#1a5a8a] hover:underline cursor-pointer text-left"
+          className="font-medium text-[#1a2332] hover:text-[#169BA2] hover:underline cursor-pointer text-left"
         >
           {r.route_short_name}
         </button>
@@ -120,7 +120,7 @@ export function RoutesTable({
             title="Sửa"
             className="h-7 w-7 rounded-md border border-[#cbd5e1] bg-white hover:bg-[#eef2f6] flex items-center justify-center cursor-pointer"
           >
-            <Pencil size={12} className="text-[#1a5a8a]" />
+            <Pencil size={12} className="text-[#169BA2]" />
           </button>
           <button
             onClick={(e) => {
@@ -132,13 +132,13 @@ export function RoutesTable({
             className={`h-7 w-7 rounded-md border flex items-center justify-center cursor-pointer disabled:opacity-50 ${
               r.is_active
                 ? 'border-[#f5b7b1] bg-white hover:bg-[#fde8e8]'
-                : 'border-[#b8d4b0] bg-white hover:bg-[#dce8de]'
+                : 'border-[#A8D5D8] bg-white hover:bg-[#E6F4F5]'
             }`}
           >
             {r.is_active ? (
               <PowerOff size={12} className="text-[#c0392b]" />
             ) : (
-              <Power size={12} className="text-[#2e7d5a]" />
+              <Power size={12} className="text-[#169BA2]" />
             )}
           </button>
           <button

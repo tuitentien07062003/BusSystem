@@ -1,0 +1,682 @@
+This file is a merged representation of a subset of the codebase, containing specifically included files, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of a subset of the repository's contents that is considered the most important context.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Only files matching these patterns are included: RouteService/src/models/**/*
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+RouteService/
+  src/
+    models/
+      agencyModel.js
+      associations.js
+      headwayConfigModel.js
+      routeModel.js
+      routeOperationModel.js
+      routeStatsCacheModel.js
+      serviceCalendarModel.js
+      shapeModel.js
+      stopModel.js
+      stopTimePatternModel.js
+      tripModel.js
+      tripPatternModel.js
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="RouteService/src/models/headwayConfigModel.js">
+import { DataTypes } from "sequelize";
+import sequelize from "../config/database.js";
+
+const HeadwayConfig = sequelize.define(
+  "HeadwayConfig",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    route_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    from_time: {
+      type: DataTypes.TIME,
+      allowNull: false,
+    },
+    to_time: {
+      type: DataTypes.TIME,
+      allowNull: false,
+    },
+    headway_seconds: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        min: 60,
+      },
+    },
+    label: {
+      type: DataTypes.STRING(100),
+      allowNull: true,
+    },
+    sort_order: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue: 0,
+    },
+    created_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: DataTypes.NOW,
+    },
+    updated_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: DataTypes.NOW,
+    },
+  },
+  {
+    tableName: "headway_configs",
+    timestamps: false,
+    indexes: [
+      { fields: ["route_id"] },
+      { unique: true, fields: ["route_id", "from_time"] },
+    ],
+  },
+);
+
+export default HeadwayConfig;
+</file>
+
+<file path="RouteService/src/models/routeOperationModel.js">
+import { DataTypes } from "sequelize";
+import sequelize from "../config/database.js";
+
+const RouteOperation = sequelize.define(
+  "RouteOperation",
+  {
+    route_id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      allowNull: false,
+    },
+    description: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    operating_start_time: {
+      type: DataTypes.TIME,
+      allowNull: false,
+      defaultValue: "05:00",
+    },
+    operating_end_time: {
+      type: DataTypes.TIME,
+      allowNull: false,
+      defaultValue: "22:00",
+    },
+    base_fare: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 7000,
+      validate: {
+        min: 0,
+      },
+    },
+    min_headway_seconds: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 900,
+      validate: {
+        min: 60,
+      },
+    },
+    max_headway_seconds: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 1800,
+      validate: {
+        min: 60,
+      },
+    },
+    activated_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: DataTypes.NOW,
+    },
+    created_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: DataTypes.NOW,
+    },
+    updated_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: DataTypes.NOW,
+    },
+  },
+  {
+    tableName: "route_operations",
+    timestamps: false,
+    indexes: [{ unique: true, fields: ["route_id"] }],
+  },
+);
+
+export default RouteOperation;
+</file>
+
+<file path="RouteService/src/models/routeStatsCacheModel.js">
+import { DataTypes } from "sequelize";
+import sequelize from "../config/database.js";
+
+const RouteStatsCache = sequelize.define(
+  "RouteStatsCache",
+  {
+    route_id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      allowNull: false,
+    },
+    go_length_m: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    return_length_m: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    go_travel_time_sec: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    return_travel_time_sec: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    computed_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: DataTypes.NOW,
+    },
+  },
+  {
+    tableName: "route_stats_cache",
+    timestamps: false,
+  },
+);
+
+export default RouteStatsCache;
+</file>
+
+<file path="RouteService/src/models/agencyModel.js">
+// src/models/agencyModel.js
+// Định nghĩa model Agency — ánh xạ bảng `agencies`
+import { DataTypes } from "sequelize";
+import sequelize from "../config/database.js";
+
+const Agency = sequelize.define(
+  "Agency",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      allowNull: false,
+    },
+    agency_id: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+    },
+    agency_name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    agency_url: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    agency_timezone: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    is_active: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
+      defaultValue: true,
+    },
+    created_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    updated_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+  },
+  {
+    tableName: "agencies",
+    timestamps: false,
+    indexes: [
+      { fields: ["agency_id"] },
+      { fields: ["agency_name"] },
+      { fields: ["is_active"] },
+    ],
+  }
+);
+
+export default Agency;
+</file>
+
+<file path="RouteService/src/models/associations.js">
+import Agency from "./agencyModel.js";
+import Route from "./routeModel.js";
+import TripPattern from "./tripPatternModel.js";
+import Shape from "./shapeModel.js";
+import Stop from "./stopModel.js";
+import StopTimePattern from "./stopTimePatternModel.js";
+import Trip from "./tripModel.js";
+import ServiceCalendar from "./serviceCalendarModel.js";
+import RouteOperation from "./routeOperationModel.js";
+import RouteStatsCache from "./routeStatsCacheModel.js";
+import HeadwayConfig from "./headwayConfigModel.js";
+
+// ═══════════════════════════════════════════════════════════════
+// 1. agencies (1) ──< (N) routes
+//    routes.agency_id → agencies.id
+// ═══════════════════════════════════════════════════════════════
+Agency.hasMany(Route, {
+  foreignKey: "agency_id",
+  as: "routes",
+  onDelete: "SET NULL",
+  onUpdate: "CASCADE",
+});
+Route.belongsTo(Agency, {
+  foreignKey: "agency_id",
+  as: "agency",
+});
+
+// ═══════════════════════════════════════════════════════════════
+// 2. routes (1) ──< (N) trip_patterns
+//    trip_patterns.route_id → routes.id
+// ═══════════════════════════════════════════════════════════════
+Route.hasMany(TripPattern, {
+  foreignKey: "route_id",
+  as: "patterns",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+TripPattern.belongsTo(Route, {
+  foreignKey: "route_id",
+  as: "route",
+});
+
+// ═══════════════════════════════════════════════════════════════
+// 3. trip_patterns (1) ──< (N) stop_time_patterns
+//    stop_time_patterns.trip_pattern_id → trip_patterns.id
+// ═══════════════════════════════════════════════════════════════
+TripPattern.hasMany(StopTimePattern, {
+  foreignKey: "trip_pattern_id",
+  as: "stop_times",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+StopTimePattern.belongsTo(TripPattern, {
+  foreignKey: "trip_pattern_id",
+  as: "pattern",
+});
+
+// ═══════════════════════════════════════════════════════════════
+// 4. stops (1) ──< (N) stop_time_patterns
+//    stop_time_patterns.stop_id → stops.id
+// ═══════════════════════════════════════════════════════════════
+Stop.hasMany(StopTimePattern, {
+  foreignKey: "stop_id",
+  as: "stop_times",
+  onDelete: "SET NULL",
+  onUpdate: "CASCADE",
+});
+StopTimePattern.belongsTo(Stop, {
+  foreignKey: "stop_id",
+  as: "stop",
+});
+
+// ═══════════════════════════════════════════════════════════════
+// 5. trip_patterns (1) ──< (N) trips
+//    trips.trip_pattern_id → trip_patterns.id
+// ═══════════════════════════════════════════════════════════════
+TripPattern.hasMany(Trip, {
+  foreignKey: "trip_pattern_id",
+  as: "trips",
+  onDelete: "SET NULL",
+  onUpdate: "CASCADE",
+});
+Trip.belongsTo(TripPattern, {
+  foreignKey: "trip_pattern_id",
+  as: "pattern",
+});
+
+// ═══════════════════════════════════════════════════════════════
+// 6. service_calendars (1) ──< (N) trips
+//    trips.service_id → service_calendars.id
+// ═══════════════════════════════════════════════════════════════
+ServiceCalendar.hasMany(Trip, {
+  foreignKey: "service_id",
+  as: "trips",
+  onDelete: "SET NULL",
+  onUpdate: "CASCADE",
+});
+Trip.belongsTo(ServiceCalendar, {
+  foreignKey: "service_id",
+  as: "service",
+});
+
+// ═══════════════════════════════════════════════════════════════
+// 7. trip_patterns.shape_id ↔ shapes.shape_id (String FK — KHÔNG PHẢI ID)
+//    Đây là FK đặc biệt: shape_id là chuỗi (VD: "19_GO"), không phải số.
+//    Sequelize cần chỉ rõ sourceKey & targetKey.
+// ═══════════════════════════════════════════════════════════════
+TripPattern.hasMany(Shape, {
+  foreignKey: "shape_id", // khóa ngoại nằm ở bảng shapes
+  sourceKey: "shape_id", // khóa nguồn ở trip_patterns
+  as: "shape_points",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+Shape.belongsTo(TripPattern, {
+  foreignKey: "shape_id",
+  targetKey: "shape_id",
+  as: "pattern",
+});
+
+// ═══════════════════════════════════════════════════════════════
+// 8. routes (1) ── (1) route_operations
+//    route_operations.route_id → routes.id  (PK + FK)
+// ═══════════════════════════════════════════════════════════════
+Route.hasOne(RouteOperation, {
+  foreignKey: "route_id",
+  as: "operations",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+RouteOperation.belongsTo(Route, {
+  foreignKey: "route_id",
+  as: "route",
+});
+
+// ═══════════════════════════════════════════════════════════════
+// 9. routes (1) ── (1) route_stats_cache
+//    route_stats_cache.route_id → routes.id  (PK + FK)
+// ═══════════════════════════════════════════════════════════════
+Route.hasOne(RouteStatsCache, {
+  foreignKey: "route_id",
+  as: "stats_cache",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+RouteStatsCache.belongsTo(Route, {
+  foreignKey: "route_id",
+  as: "route",
+});
+
+// ═══════════════════════════════════════════════════════════════
+// 10. routes (1) ──< (N) headway_configs
+//     headway_configs.route_id → routes.id
+// ═══════════════════════════════════════════════════════════════
+Route.hasMany(HeadwayConfig, {
+  foreignKey: "route_id",
+  as: "headway_configs",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+HeadwayConfig.belongsTo(Route, {
+  foreignKey: "route_id",
+  as: "route",
+});
+
+// ═══════════════════════════════════════════════════════════════
+// Export tất cả model (đã gắn association) để dùng lại ở service
+// ═══════════════════════════════════════════════════════════════
+export {
+  Agency,
+  Route,
+  TripPattern,
+  Shape,
+  Stop,
+  StopTimePattern,
+  Trip,
+  ServiceCalendar,
+  RouteOperation,
+  RouteStatsCache,
+  HeadwayConfig,
+};
+</file>
+
+<file path="RouteService/src/models/routeModel.js">
+import { DataTypes } from "sequelize";
+import sequelize from "../config/database.js";
+
+const Route = sequelize.define(
+  "Route",
+  {
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    route_id: { type: DataTypes.STRING, allowNull: false, unique: true },
+    agency_id: { type: DataTypes.INTEGER, allowNull: true },
+    route_short_name: { type: DataTypes.STRING, allowNull: false },
+    route_full_name: { type: DataTypes.STRING, allowNull: false },
+    route_color: { type: DataTypes.STRING, allowNull: true },
+    is_active: { type: DataTypes.BOOLEAN, defaultValue: true },
+    created_at: { type: DataTypes.DATE, allowNull: true },
+    updated_at: { type: DataTypes.DATE, allowNull: true },
+  },
+  { tableName: "routes", timestamps: false }
+);
+
+export default Route;
+</file>
+
+<file path="RouteService/src/models/serviceCalendarModel.js">
+import { DataTypes } from "sequelize";
+import sequelize from "../config/database.js";
+
+const ServiceCalendar = sequelize.define(
+  "ServiceCalendar",
+  {
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    service_id: { type: DataTypes.STRING, allowNull: false, unique: true },
+    monday: { type: DataTypes.BOOLEAN, defaultValue: false },
+    tuesday: { type: DataTypes.BOOLEAN, defaultValue: false },
+    wednesday: { type: DataTypes.BOOLEAN, defaultValue: false },
+    thursday: { type: DataTypes.BOOLEAN, defaultValue: false },
+    friday: { type: DataTypes.BOOLEAN, defaultValue: false },
+    saturday: { type: DataTypes.BOOLEAN, defaultValue: false },
+    sunday: { type: DataTypes.BOOLEAN, defaultValue: false },
+    headway_multiplier: {
+      type: DataTypes.DECIMAL(3, 2),
+      allowNull: true,
+      defaultValue: 1.0,
+      validate: {
+        min: 0.1,
+        max: 5.0,
+      },
+    },
+    start_date: { type: DataTypes.DATEONLY, allowNull: false },
+    end_date: { type: DataTypes.DATEONLY, allowNull: false },
+  },
+  { tableName: "service_calendars", timestamps: false },
+);
+
+export default ServiceCalendar;
+</file>
+
+<file path="RouteService/src/models/shapeModel.js">
+import { DataTypes } from "sequelize";
+import sequelize from "../config/database.js";
+
+const Shape = sequelize.define(
+  "Shape",
+  {
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    shape_id: { type: DataTypes.STRING, allowNull: false },
+    geom: { type: DataTypes.GEOMETRY("POINT", 4326), allowNull: false },
+    shape_pt_sequence: { type: DataTypes.INTEGER, allowNull: false },
+  },
+  { tableName: "shapes", timestamps: false, indexes: [{ fields: ["shape_id"] }] }
+);
+
+export default Shape;
+</file>
+
+<file path="RouteService/src/models/stopModel.js">
+import { DataTypes } from "sequelize";
+import sequelize from "../config/database.js";
+
+const Stop = sequelize.define(
+  "Stop",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      allowNull: false,
+    },
+    stop_id: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+    },
+    stop_name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    geom: {
+      type: DataTypes.GEOMETRY("POINT", 4326),
+      allowNull: false,
+    },
+    stop_type: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    is_active: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
+      defaultValue: true,
+    },
+    created_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+  },
+  {
+    tableName: "stops",
+    timestamps: false,
+    indexes: [
+      { fields: ["stop_id"] },
+      { fields: ["stop_name"] },
+      { fields: ["is_active"] },
+    ],
+  },
+);
+
+export default Stop;
+</file>
+
+<file path="RouteService/src/models/stopTimePatternModel.js">
+import { DataTypes } from "sequelize";
+import sequelize from "../config/database.js";
+
+const StopTimePattern = sequelize.define(
+  "StopTimePattern",
+  {
+    id: { type: DataTypes.BIGINT, primaryKey: true, autoIncrement: true },
+    trip_pattern_id: { type: DataTypes.INTEGER, allowNull: true },
+    stop_id: { type: DataTypes.INTEGER, allowNull: true },
+    stop_sequence: { type: DataTypes.INTEGER, allowNull: false },
+    arrival_offset_seconds: { type: DataTypes.INTEGER, allowNull: false },
+    departure_offset_seconds: { type: DataTypes.INTEGER, allowNull: false },
+  },
+  { tableName: "stop_time_patterns", timestamps: false }
+);
+
+export default StopTimePattern;
+</file>
+
+<file path="RouteService/src/models/tripModel.js">
+import { DataTypes } from "sequelize";
+import sequelize from "../config/database.js";
+
+const Trip = sequelize.define(
+  "Trip",
+  {
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    trip_id: { type: DataTypes.STRING, allowNull: false, unique: true },
+    trip_pattern_id: { type: DataTypes.INTEGER, allowNull: true },
+    service_id: { type: DataTypes.INTEGER, allowNull: true },
+    start_time: { type: DataTypes.TIME, allowNull: false },
+    is_active: { type: DataTypes.BOOLEAN, defaultValue: true },
+    created_at: { type: DataTypes.DATE, allowNull: true },
+    updated_at: { type: DataTypes.DATE, allowNull: true },
+  },
+  { tableName: "trips", timestamps: false }
+);
+
+export default Trip;
+</file>
+
+<file path="RouteService/src/models/tripPatternModel.js">
+import { DataTypes } from "sequelize";
+import sequelize from "../config/database.js";
+
+const TripPattern = sequelize.define(
+  "TripPattern",
+  {
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    pattern_code: { type: DataTypes.STRING, allowNull: false },
+    route_id: { type: DataTypes.INTEGER, allowNull: true },
+    shape_id: { type: DataTypes.STRING, allowNull: true },
+    trip_headsign: { type: DataTypes.STRING, allowNull: true },
+    direction_id: { type: DataTypes.INTEGER, allowNull: true },
+  },
+  { tableName: "trip_patterns", timestamps: false }
+);
+
+export default TripPattern;
+</file>
+
+</files>
