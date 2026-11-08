@@ -1,29 +1,25 @@
-// API client cho module mô phỏng
 import axios from "axios";
 
-// Tạo instance axios với baseURL lấy từ .env
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || "/tbus",
-  timeout: 15000,
+  timeout: 20000,
 });
 
-// Interceptor để log lỗi tập trung
-api.interceptors.response.use(
-  (res) => res,
-  (err) => {
-    console.error("[API Error]", err?.response?.data || err.message);
-    return Promise.reject(err);
-  },
-);
+export async function fetchFullRoute(routeId) {
+  const res = await api.get(`/routes/${routeId}/full`);
+  return res.data;
+}
 
-/**
- * Lấy dữ liệu nhiều chuyến cùng hướng (GO / RETURN)
- * @param {string} direction - 'go' | 'return'
- * @param {number} limit - số chuyến tối đa
- */
-export async function fetchSimulationBatch(direction, limit = 30) {
-  const res = await api.get("/simulation/batch", {
-    params: { direction, limit },
+export async function fetchRouteTrips(routeId, limit = 30) {
+  const res = await api.get("/trips", {
+    params: { route_id: routeId, limit, page: 1 },
   });
+  return res.data;
+}
+
+export async function fetchSimAssignments({ date, route_id }) {
+  const params = { date, limit: 200 };
+  if (route_id) params.route_id = route_id;
+  const res = await fleetApi.get("/assignments", { params });
   return res.data;
 }

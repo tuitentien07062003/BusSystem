@@ -8,7 +8,9 @@ import {
   CalendarDays,
   Clock,
   Settings,
-  ExternalLink,
+  UserCog,
+  ClipboardList,
+  ArrowRightLeft,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -26,6 +28,17 @@ const NAV_GROUPS = [
       { to: "/admin/routes", label: "Tuyến đường", icon: RouteIcon },
       { to: "/admin/trips", label: "Chuyến xe", icon: Clock },
       { to: "/admin/calendars", label: "Lịch phục vụ", icon: CalendarDays },
+    ],
+  },
+  {
+    title: "Đội xe & Nhân sự",
+    items: [
+      { to: "/admin/employees", label: "Nhân viên", icon: UserCog },
+      { to: "/admin/vehicles", label: "Xe", icon: Bus },
+      { to: "/admin/rosters", label: "Lịch làm việc", icon: CalendarDays },
+      { to: "/admin/assignments", label: "Phân công", icon: ClipboardList },
+
+      { to: "/admin/swaps", label: "Đổi ca", icon: ArrowRightLeft },
     ],
   },
   {

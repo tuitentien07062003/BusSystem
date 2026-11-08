@@ -11,6 +11,11 @@ import { RoutesAdminPage } from "@/admin/pages/RoutesAdminPage";
 import { CalendarsAdminPage } from "@/admin/pages/CalendarsAdminPage";
 import { TripsAdminPage } from "@/admin/pages/TripsAdminPage";
 import { OrganizationPage } from "@/admin/pages/OrganizationPage";
+import { EmployeesAdminPage } from "@/admin/pages/EmployeesAdminPage";
+import { VehiclesAdminPage } from "@/admin/pages/VehiclesAdminPage";
+import { RostersAdminPage } from "@/admin/pages/RostersAdminPage";
+import { AssignmentsAdminPage } from "@/admin/pages/AssignmentsAdminPage";
+import { SwapsAdminPage } from "@/admin/pages/SwapsAdminPage";
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { refetchOnWindowFocus: false, retry: 1 } },
@@ -33,6 +38,11 @@ export default function App() {
                 <Route path="trips" element={<TripsAdminPage />} />
                 <Route path="calendars" element={<CalendarsAdminPage />} />
                 <Route path="organization" element={<OrganizationPage />} />
+                <Route path="employees" element={<EmployeesAdminPage />} />
+                <Route path="vehicles" element={<VehiclesAdminPage />} />
+                <Route path="rosters" element={<RostersAdminPage />} />
+                <Route path="assignments" element={<AssignmentsAdminPage />} />
+                <Route path="swaps" element={<SwapsAdminPage />} />
               </Route>
 
               <Route path="*" element={<Navigate to="/" replace />} />

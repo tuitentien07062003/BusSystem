@@ -1,196 +1,220 @@
-// Context quản lý state mô phỏng + cầu nối giữa Engine và React
 import { createContext, useEffect, useState, useCallback, useRef } from "react";
 import { engine } from "@/engine/simulationEngine";
-import { formatClock } from "@/utils/timeUtils";
+import { DEFAULT_SPEED } from "@/engine/simConstants";
 
 export const SimulationContext = createContext(null);
 
-export function SimulationProvider({ children }) {
-  // ─── State hiển thị trên UI ───
-  const [currentDir, setCurrentDirState] = useState("go");
-  const [simData, setSimData] = useState(null);
-  const [isSimulating, setIsSimulating] = useState(false);
-  const [timeAccel, setTimeAccelState] = useState(10);
-  const [clockText, setClockText] = useState("--:--:--");
-  const [stats, setStats] = useState({ running: 0, stopped: 0, waiting: 0 });
-  const [busList, setBusList] = useState([]);
-  const [trackedBusId, setTrackedBusId] = useState(null);
+function formatClock(sec) {
+  if (sec == null) return "--:--:--";
+  const h = Math.floor(sec / 3600) % 24;
+  const m = Math.floor((sec % 3600) / 60);
+  const s = Math.floor(sec % 60);
+  const p = (n) => String(n).padStart(2, "0");
+  return `${p(h)}:${p(m)}:${p(s)}`;
+}
 
-  // ─── Refs để tránh re-render không cần thiết ───
+export function SimulationProvider({ children }) {
+  const [selectedRouteId, setSelectedRouteId] = useState(null);
+  const [routesList, setRoutesList] = useState([]);
+
+  const [isRunning, setIsRunning] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [speed, setSpeedState] = useState(DEFAULT_SPEED);
+  const [clockText, setClockText] = useState("--:--:--");
+  const [stats, setStats] = useState({
+    running: 0,
+    stopped: 0,
+    waiting: 0,
+    done: 0,
+    total: 0,
+  });
+  const [blockList, setBlockList] = useState([]);
+  const [trackedBlockId, setTrackedBlockId] = useState(null);
+  const [routeMeta, setRouteMeta] = useState(null);
+
   const lastStatTime = useRef(0);
   const lastListTime = useRef(0);
 
-  // ─── Hàm đồng bộ stats từ engine ───
+  // ═══════════════════════════════════════════════════════════════
+  // SYNC FROM ENGINE
+  // ═══════════════════════════════════════════════════════════════
   const syncStats = useCallback(() => {
     let r = 0,
       s = 0,
-      w = 0;
-    for (const b of engine.buses) {
+      w = 0,
+      d = 0;
+    for (const b of engine.blocks) {
       if (b.status === "running") r++;
       else if (b.status === "stopped") s++;
+      else if (b.status === "done") d++;
       else w++;
     }
-    setStats({ running: r, stopped: s, waiting: w });
+    setStats({
+      running: r,
+      stopped: s,
+      waiting: w,
+      done: d,
+      total: engine.blocks.length,
+    });
   }, []);
 
-  // ─── Hàm đồng bộ đồng hồ ───
   const syncClock = useCallback(() => {
-    const first = engine.buses.find(
-      (b) => b.status === "running" || b.status === "stopped",
-    );
-    if (first) {
-      setClockText(formatClock(first.startTime, engine.tripElapsed(first)));
-    } else if (engine.buses.length > 0) {
-      setClockText(formatClock(engine.buses[0].startTime, 0));
+    if (engine.blocks.length === 0) {
+      setClockText("--:--:--");
+      return;
     }
+    const absTime = engine.baseTime + engine.globalElapsed;
+    setClockText(formatClock(absTime));
   }, []);
 
-  // ─── Hàm đồng bộ danh sách xe ───
-  const syncBusList = useCallback(() => {
-    const list = engine.buses.map((b) => {
-      const te = engine.tripElapsed(b);
-      const timeStr =
-        te < 0
-          ? `chờ ${Math.ceil(-te / 60)}ph`
-          : b.status === "done"
-            ? "Xong"
-            : `+${Math.floor(Math.max(0, te) / 60)}ph`;
+  const syncBlockList = useCallback(() => {
+    const list = engine.blocks.map((b) => {
+      const absTime = engine.baseTime + engine.globalElapsed;
+      let timeStr = "";
+      if (b.status === "done") {
+        timeStr = "Xong";
+      } else if (b.active_trip) {
+        const te = absTime - b.active_trip.start_sec;
+        timeStr = `+${Math.floor(Math.max(0, te) / 60)}p`;
+      } else {
+        timeStr = "Chờ";
+      }
+
       return {
-        trip_id: b.trip_id,
+        id: b.id,
+        vehicle_code: b.vehicle_code,
+        license_plate: b.license_plate,
+        driver_code: b.driver_code,
+        driver_name: b.driver_name,
+        direction_id: b.direction_id,
         status: b.status,
-        startTime: b.startTime,
-        stopName: engine.currentStopName(b),
+        current_trip: b.active_trip?.trip_id || null,
         timeStr,
+        trip_count: b.trips.length,
       };
     });
-    setBusList(list);
+    setBlockList(list);
   }, []);
 
-  // ─── Đăng ký engine.onTick 1 lần ───
+  // ═══════════════════════════════════════════════════════════════
+  // SUBSCRIBE
+  // ═══════════════════════════════════════════════════════════════
   useEffect(() => {
-    const unsubscribe = engine.onTick(() => {
+    const unsub = engine.onTick(() => {
       const now = performance.now();
-      // Cập nhật stats + đồng hồ mỗi 100ms
       if (now - lastStatTime.current > 100) {
         syncStats();
         syncClock();
         lastStatTime.current = now;
       }
-      // Cập nhật danh sách xe mỗi 1.5s
-      if (now - lastListTime.current > 1500) {
-        syncBusList();
+      if (now - lastListTime.current > 800) {
+        syncBlockList();
         lastListTime.current = now;
       }
-      // Kiểm tra hoàn thành
+
+      setIsRunning(engine.isRunning);
+      setIsPaused(engine.isPaused);
+
       if (engine.allDone() && engine.isRunning) {
         engine.stop();
-        setIsSimulating(false);
+        setIsRunning(false);
         setClockText("🏁 Hoàn tất");
       }
     });
-    return unsubscribe;
-  }, [syncStats, syncClock, syncBusList]);
+    return unsub;
+  }, [syncStats, syncClock, syncBlockList]);
 
-  // ─── Các hàm điều khiển ───
+  // ═══════════════════════════════════════════════════════════════
+  // LOAD
+  // ═══════════════════════════════════════════════════════════════
+  const loadSimData = useCallback(
+    (patterns, trips, assignments) => {
+      engine.reset();
+      engine.loadRoute(patterns);
+      engine.loadBlocks(assignments, trips);
 
-  /**
-   * Nạp dữ liệu mô phỏng vào engine và state
-   */
-  const loadData = useCallback(
-    (data) => {
-      engine.loadData(data);
-      setSimData(data);
-      setClockText("--:--:--");
+      const meta = {};
+      for (const p of patterns) {
+        meta[p.direction_id] = {
+          direction_id: p.direction_id,
+          trip_headsign: p.trip_headsign,
+          stop_count: (p.stops || []).length,
+        };
+      }
+      setRouteMeta(meta);
+
       syncStats();
-      syncBusList();
+      syncBlockList();
+      setClockText("--:--:--");
     },
-    [syncStats, syncBusList],
+    [syncStats, syncBlockList],
   );
 
-  /**
-   * Bắt đầu mô phỏng
-   */
+  // ═══════════════════════════════════════════════════════════════
+  // CONTROLS
+  // ═══════════════════════════════════════════════════════════════
   const start = useCallback(() => {
-    if (!engine.simData || engine.isRunning) return;
-    engine.start(timeAccel);
-    setIsSimulating(true);
+    if (engine.blocks.length === 0) return;
+    engine.start(speed);
+    setIsRunning(true);
+    setIsPaused(false);
     syncStats();
-    syncBusList();
-  }, [timeAccel, syncStats, syncBusList]);
+    syncBlockList();
+  }, [speed, syncStats, syncBlockList]);
 
-  /**
-   * Reset về trạng thái ban đầu
-   */
+  const pause = useCallback(() => {
+    engine.pause();
+    setIsPaused(true);
+  }, []);
+
+  const resume = useCallback(() => {
+    engine.resume();
+    setIsPaused(false);
+  }, []);
+
   const reset = useCallback(() => {
-    engine.stop();
-    engine.globalElapsed = 0;
-    if (engine.simData) {
-      const firstStop = engine.simData.stops[0];
-      for (const b of engine.buses) {
-        b.status = "waiting";
-        b.curStop = 0;
-        b.isDwelling = false;
-        b.dwellEndTime = -1;
-        b.latlng = [firstStop.latitude, firstStop.longitude];
-      }
-    }
-    setIsSimulating(false);
-    setTrackedBusId(null);
+    engine.reset();
+    setIsRunning(false);
+    setIsPaused(false);
     setClockText("--:--:--");
     syncStats();
-    syncBusList();
-  }, [syncStats, syncBusList]);
+    syncBlockList();
+  }, [syncStats, syncBlockList]);
 
-  /**
-   * Đổi tốc độ mô phỏng
-   */
-  const setTimeAccel = useCallback((v) => {
-    const val = parseInt(v);
-    setTimeAccelState(val);
-    engine.setTimeAccel(val);
+  const setSpeed = useCallback((v) => {
+    const val = parseInt(v) || DEFAULT_SPEED;
+    setSpeedState(val);
+    engine.setSpeed(val);
   }, []);
 
-  /**
-   * Đổi hướng (GO / RETURN)
-   */
-  const setCurrentDir = useCallback(
-    (dir) => {
-      if (dir === currentDir) return;
-      engine.stop();
-      setCurrentDirState(dir);
-      setSimData(null);
-      setIsSimulating(false);
-    },
-    [currentDir],
-  );
-
-  /**
-   * Theo dõi / bỏ theo dõi 1 xe
-   */
-  const toggleTrackBus = useCallback((tripId) => {
-    setTrackedBusId((prev) => (prev === tripId ? null : tripId));
+  const toggleTrackBlock = useCallback((blockId) => {
+    setTrackedBlockId((prev) => (prev === blockId ? null : blockId));
   }, []);
 
-  const clearTrack = useCallback(() => setTrackedBusId(null), []);
+  const clearTrack = useCallback(() => setTrackedBlockId(null), []);
 
-  // ─── Giá trị context cung cấp ───
   const value = {
-    // State
-    currentDir,
-    simData,
-    isSimulating,
-    timeAccel,
+    selectedRouteId,
+    setSelectedRouteId,
+    routesList,
+    setRoutesList,
+    routeMeta,
+
+    isRunning,
+    isPaused,
+    speed,
     clockText,
     stats,
-    busList,
-    trackedBusId,
-    // Actions
-    loadData,
+    blockList,
+    trackedBlockId,
+
+    loadSimData,
     start,
+    pause,
+    resume,
     reset,
-    setTimeAccel,
-    setCurrentDir,
-    toggleTrackBus,
+    setSpeed,
+    toggleTrackBlock,
     clearTrack,
   };
 

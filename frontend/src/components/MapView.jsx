@@ -1,64 +1,84 @@
-// Bản đồ Leaflet — không dùng React để cập nhật marker (để tránh re-render)
 import { useEffect, useRef } from "react";
 import L from "leaflet";
 import { engine } from "@/engine/simulationEngine";
 import { useSimulation } from "@/hooks/useSimulation";
+import { COLORS, BUS_STATUS_COLOR } from "@/engine/simConstants";
 
-// Màu sắc theo hướng
-const COLORS = {
-  go: { route: "#2ecc71", busStop: "#27ae60", terminal: "#e74c3c" },
-  return: { route: "#0078d4", busStop: "#0078d4", terminal: "#e74c3c" },
-};
+// ═══════════════════════════════════════════════════════════════
+// ICON
+// ═══════════════════════════════════════════════════════════════
+function makeBusIcon(dir, status, tracked) {
+  const color =
+    status === "waiting" || status === "done"
+      ? BUS_STATUS_COLOR[status]
+      : dir === 0
+        ? COLORS.go.bus
+        : COLORS.return.bus;
 
-// Tạo icon xe bus bằng SVG
-function makeBusIcon(dir, status) {
-  const c =
-    status === "waiting"
-      ? "#8a9aaa"
-      : status === "done"
-        ? "#b0bcca"
-        : status === "stopped"
-          ? "#ffb74d"
-          : dir === "go"
-            ? "#2ecc71"
-            : "#0078d4";
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30">
-    <circle cx="15" cy="15" r="14" fill="${c}" stroke="#fff" stroke-width="2"/>
-    <text x="15" y="20" font-size="15" text-anchor="middle" fill="white">🚌</text>
+  const ringColor = tracked ? "#F59E0B" : "#FFFFFF";
+  const ringWidth = tracked ? 3 : 2;
+
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34">
+    <circle cx="17" cy="17" r="15" fill="${color}" stroke="${ringColor}" stroke-width="${ringWidth}"/>
+    <text x="17" y="22" font-size="14" text-anchor="middle" fill="white" font-family="Arial">🚌</text>
   </svg>`;
   return L.divIcon({
     html: svg,
     className: "",
-    iconSize: [30, 30],
-    iconAnchor: [15, 15],
+    iconSize: [34, 34],
+    iconAnchor: [17, 17],
   });
 }
 
+function makeStopCircle(color, isTerminal) {
+  return {
+    radius: isTerminal ? 7 : 5,
+    color: isTerminal ? COLORS.depot : color,
+    fillColor: "#FFFFFF",
+    fillOpacity: 1,
+    weight: 2,
+  };
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MAIN
+// ═══════════════════════════════════════════════════════════════
 export function MapView() {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
-  const routeLayerRef = useRef(null);
-  const stopLayersRef = useRef([]);
-  const busMarkersRef = useRef(new Map());
+  const layersRef = useRef({
+    routes: {},
+    stops: [],
+    busMarkers: new Map(),
+  });
+  const busStatusRef = useRef(new Map());
+  const trackedBlockRef = useRef(null);
 
-  const { simData, currentDir, trackedBusId, toggleTrackBus } = useSimulation();
+  const { routeMeta, trackedBlockId, toggleTrackBlock, selectedRouteId } =
+    useSimulation();
 
-  // ─── Khởi tạo bản đồ 1 lần ───
+  // ═══════════════════════════════════════════════════════════════
+  // INIT MAP
+  // ═══════════════════════════════════════════════════════════════
   useEffect(() => {
     if (mapRef.current || !containerRef.current) return;
-    const map = L.map(containerRef.current, { zoomControl: false }).setView(
-      [10.82, 106.74],
-      13,
-    );
+
+    const map = L.map(containerRef.current, {
+      zoomControl: false,
+      attributionControl: true,
+    }).setView([10.82, 106.74], 13);
+
     L.control.zoom({ position: "bottomright" }).addTo(map);
+
+    // Esri Dark Gray Canvas
     L.tileLayer(
-      "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+      "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
       {
-        attribution: "© OpenStreetMap © CARTO",
-        subdomains: "abcd",
+        attribution: "© Esri, HERE, Garmin, © OpenStreetMap",
         maxZoom: 19,
       },
     ).addTo(map);
+
     mapRef.current = map;
 
     return () => {
@@ -67,90 +87,164 @@ export function MapView() {
     };
   }, []);
 
-  // ─── Vẽ tuyến + trạm khi simData / hướng thay đổi ───
+  // ═══════════════════════════════════════════════════════════════
+  // VẼ ROUTE + STOPS
+  // ═══════════════════════════════════════════════════════════════
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !simData) return;
+    if (!map || !routeMeta) return;
 
-    // Xoá lớp cũ
-    if (routeLayerRef.current) {
-      map.removeLayer(routeLayerRef.current);
-      routeLayerRef.current = null;
+    Object.values(layersRef.current.routes).forEach((l) => map.removeLayer(l));
+    layersRef.current.stops.forEach((l) => map.removeLayer(l));
+    layersRef.current.routes = {};
+    layersRef.current.stops = [];
+
+    const bounds = L.latLngBounds();
+
+    Object.values(routeMeta).forEach((meta) => {
+      const dir = meta.direction_id;
+      const route = engine.routesByDir[dir];
+      if (!route?.shape) return;
+
+      const color = dir === 0 ? COLORS.go.route : COLORS.return.route;
+
+      const layer = L.geoJSON(route.shape, {
+        style: { color, weight: 5, opacity: 0.85 },
+      }).addTo(map);
+      layersRef.current.routes[dir] = layer;
+
+      route.stops.forEach((s, idx) => {
+        const isTerminal = idx === 0 || idx === route.stops.length - 1;
+        const m = L.circleMarker(
+          [s.latitude, s.longitude],
+          makeStopCircle(color, isTerminal),
+        )
+          .addTo(map)
+          .bindPopup(
+            `<div class="bus-popup">
+              <b>${s.stop_name}</b>
+              <div class="sub">Trạm ${s.stop_sequence} · ${
+                dir === 0 ? "Chiều đi" : "Chiều về"
+              }</div>
+            </div>`,
+          );
+        layersRef.current.stops.push(m);
+        bounds.extend([s.latitude, s.longitude]);
+      });
+
+      route.routePoints.forEach((p) => bounds.extend([p.lat, p.lng]));
+    });
+
+    if (bounds.isValid()) {
+      map.fitBounds(bounds, { padding: [40, 40], maxZoom: 15 });
     }
-    stopLayersRef.current.forEach((m) => map.removeLayer(m));
-    stopLayersRef.current = [];
+  }, [routeMeta, selectedRouteId]);
 
-    const col = COLORS[currentDir];
+  // ═══════════════════════════════════════════════════════════════
+  // BUS MARKERS — mỗi block = 1 bus
+  // ═══════════════════════════════════════════════════════════════
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
 
-    // Vẽ tuyến
-    routeLayerRef.current = L.geoJSON(simData.route_geometry, {
-      style: { color: col.route, weight: 4, opacity: 0.7 },
-    }).addTo(map);
+    layersRef.current.busMarkers.forEach((m) => map.removeLayer(m));
+    layersRef.current.busMarkers.clear();
+    busStatusRef.current.clear();
 
-    // Vẽ các trạm
-    simData.stops.forEach((s) => {
-      const isTerminal = s.stop_type === 1;
-      const m = L.circleMarker([s.latitude, s.longitude], {
-        radius: isTerminal ? 7 : 4,
-        color: isTerminal ? col.terminal : col.busStop,
-        fillColor: "#fff",
-        fillOpacity: 1,
-        weight: 2,
+    if (engine.blocks.length === 0) return;
+
+    for (const block of engine.blocks) {
+      const marker = L.marker(block.latlng, {
+        icon: makeBusIcon(block.direction_id, block.status, false),
+        zIndexOffset: 500 + block.id,
       })
         .addTo(map)
         .bindPopup(
-          `<div class="bus-popup"><b>${s.stop_name}</b>
-            <div class="sub">Trạm ${s.stop_sequence}</div></div>`,
-        );
-      stopLayersRef.current.push(m);
-    });
+          `<div class="bus-popup">
+            <b>${block.vehicle_code}</b>
+            <div class="sub">${block.driver_code} · ${block.driver_name}</div>
+            <div class="sub">${block.license_plate}</div>
+          </div>`,
+        )
+        .on("click", () => toggleTrackBlock(block.id));
 
-    map.fitBounds(routeLayerRef.current.getBounds(), { padding: [40, 40] });
-  }, [simData, currentDir]);
+      layersRef.current.busMarkers.set(block.id, marker);
+      busStatusRef.current.set(block.id, block.status);
+    }
 
-  // ─── Tạo marker xe bus và cập nhật theo engine ───
-  useEffect(() => {
-    const map = mapRef.current;
-    if (!map || !simData) return;
+    const unsub = engine.onTick(() => {
+      for (const block of engine.blocks) {
+        const marker = layersRef.current.busMarkers.get(block.id);
+        if (!marker) continue;
 
-    // Xoá marker cũ
-    busMarkersRef.current.forEach((m) => map.removeLayer(m));
-    busMarkersRef.current.clear();
+        marker.setLatLng(block.latlng);
 
-    // Tạo marker cho từng xe
-    engine.buses.forEach((bus) => {
-      const marker = L.marker(bus.latlng, {
-        icon: makeBusIcon(currentDir, bus.status),
-        zIndexOffset: 500 + bus.index,
-      })
-        .addTo(map)
-        .on("click", () => toggleTrackBus(bus.trip_id));
-      busMarkersRef.current.set(bus.trip_id, marker);
-      bus.prevStatus = bus.status;
-    });
-
-    // Đăng ký callback mỗi tick để cập nhật vị trí marker (không qua React)
-    const unsubscribe = engine.onTick(() => {
-      engine.buses.forEach((bus) => {
-        const marker = busMarkersRef.current.get(bus.trip_id);
-        if (!marker) return;
-        marker.setLatLng(bus.latlng);
-        if (bus.status !== bus.prevStatus) {
-          marker.setIcon(makeBusIcon(currentDir, bus.status));
-          bus.prevStatus = bus.status;
-        }
-      });
-
-      if (trackedBusId) {
-        const tracked = engine.buses.find((b) => b.trip_id === trackedBusId);
-        if (tracked) {
-          map.panTo(tracked.latlng, { animate: true, duration: 0.3 });
+        const prevStatus = busStatusRef.current.get(block.id);
+        if (prevStatus !== block.status) {
+          const isTracked = trackedBlockRef.current === block.id;
+          marker.setIcon(
+            makeBusIcon(block.direction_id, block.status, isTracked),
+          );
+          busStatusRef.current.set(block.id, block.status);
         }
       }
     });
 
-    return () => unsubscribe();
-  }, [simData, currentDir, trackedBusId, toggleTrackBus]);
+    return () => {
+      unsub();
+      layersRef.current.busMarkers.forEach((m) => map.removeLayer(m));
+      layersRef.current.busMarkers.clear();
+      busStatusRef.current.clear();
+    };
+  }, [routeMeta, selectedRouteId, toggleTrackBlock]);
 
-  return <div ref={containerRef} className="flex-1 h-screen bg-[#e9edf2]" />;
+  // ═══════════════════════════════════════════════════════════════
+  // TRACK BLOCK
+  // ═══════════════════════════════════════════════════════════════
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    if (trackedBlockRef.current) {
+      const oldBlock = engine.blocks.find(
+        (b) => b.id === trackedBlockRef.current,
+      );
+      const oldMarker = layersRef.current.busMarkers.get(
+        trackedBlockRef.current,
+      );
+      if (oldBlock && oldMarker) {
+        oldMarker.setIcon(
+          makeBusIcon(oldBlock.direction_id, oldBlock.status, false),
+        );
+      }
+    }
+
+    trackedBlockRef.current = trackedBlockId;
+
+    if (!trackedBlockId) return;
+
+    const block = engine.blocks.find((b) => b.id === trackedBlockId);
+    const marker = layersRef.current.busMarkers.get(trackedBlockId);
+    if (block && marker) {
+      marker.setIcon(makeBusIcon(block.direction_id, block.status, true));
+      map.panTo(block.latlng, { animate: true, duration: 0.5 });
+    }
+
+    const unsub = engine.onTick(() => {
+      const b = engine.blocks.find((x) => x.id === trackedBlockId);
+      if (b) {
+        map.panTo(b.latlng, { animate: true, duration: 0.3 });
+      }
+    });
+
+    return unsub;
+  }, [trackedBlockId]);
+
+  return (
+    <div
+      ref={containerRef}
+      className="flex-1 h-screen bg-[#0A0E1A]"
+      style={{ minHeight: 0 }}
+    />
+  );
 }

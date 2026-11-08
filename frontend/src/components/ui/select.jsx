@@ -1,6 +1,6 @@
-import * as SelectPrimitive from '@radix-ui/react-select';
-import { Check, ChevronDown } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import * as SelectPrimitive from "@radix-ui/react-select";
+import { Check, ChevronDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export const Select = SelectPrimitive.Root;
 export const SelectValue = SelectPrimitive.Value;
@@ -10,10 +10,10 @@ export function SelectTrigger({ className, children, ...props }) {
   return (
     <SelectPrimitive.Trigger
       className={cn(
-        'inline-flex h-9 items-center justify-between gap-2 rounded-md border border-[#cbd5e1] bg-white px-3 text-sm font-medium text-[#1a2332] outline-none cursor-pointer',
-        'hover:border-[#169BA2] focus:border-[#169BA2] focus:ring-2 focus:ring-[#169BA2]/20',
-        'disabled:cursor-not-allowed disabled:opacity-50',
-        className
+        "inline-flex h-9 items-center justify-between gap-2 rounded-md border border-[#cbd5e1] bg-white px-3 text-sm font-medium text-[#1a2332] outline-none cursor-pointer",
+        "hover:border-[#169BA2] focus:border-[#169BA2] focus:ring-2 focus:ring-[#169BA2]/20",
+        "disabled:cursor-not-allowed disabled:opacity-50",
+        className,
       )}
       {...props}
     >
@@ -32,8 +32,9 @@ export function SelectContent({ className, children, ...props }) {
         position="popper"
         sideOffset={4}
         className={cn(
-          'z-[60] min-w-[var(--radix-select-trigger-width)] overflow-hidden rounded-md border border-[#d0d7e2] bg-white shadow-lg',
-          className
+          "z-[1200] min-w-[var(--radix-select-trigger-width)] overflow-hidden rounded-md border border-[#d0d7e2] bg-white shadow-lg",
+          "max-h-[280px]",
+          className,
         )}
         {...props}
       >
@@ -49,10 +50,10 @@ export function SelectItem({ className, children, ...props }) {
   return (
     <SelectPrimitive.Item
       className={cn(
-        'relative flex cursor-pointer select-none items-center gap-2 rounded px-7 py-1.5 text-sm text-[#1a2332] outline-none',
-        'hover:bg-[#eef2f6] focus:bg-[#eef2f6]',
-        'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
-        className
+        "relative flex cursor-pointer select-none items-center gap-2 rounded px-7 py-1.5 text-sm text-[#1a2332] outline-none",
+        "hover:bg-[#eef2f6] focus:bg-[#eef2f6]",
+        "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+        className,
       )}
       {...props}
     >

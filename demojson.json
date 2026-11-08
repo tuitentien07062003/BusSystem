@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-04",
+  "route_id": 1,
+  "shift_template_id": 1,
+  "depot_id": 1,
+  "blocks": [
+    {
+      "vehicle_id": 1,
+      "employee_id": 16,
+      "co_driver_id": 61,
+      "start_time": "05:00",
+      "end_time": "13:15"
+    },
+    {
+      "vehicle_id": 2,
+      "employee_id": 17,
+      "co_driver_id": 62,
+      "start_time": "05:15",
+      "end_time": "13:30"
+    }
+  ]
+}

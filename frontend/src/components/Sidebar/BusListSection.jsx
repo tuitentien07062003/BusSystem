@@ -1,90 +1,106 @@
-// Danh sách 30 xe bus
 import { useSimulation } from "@/hooks/useSimulation";
 
-// Chọn màu chấm tròn theo trạng thái
 function dotColor(status, dir) {
-  if (status === "running") return dir === "go" ? "#2ecc71" : "#0078d4";
-  if (status === "stopped") return "#ffb74d";
-  if (status === "done") return "#b0bcca";
-  return "#8a9aaa";
+  if (status === "running") return dir === 0 ? "#169BA2" : "#9333EA";
+  if (status === "stopped") return "#E08940";
+  if (status === "done") return "#B0BCCA";
+  return "#8A9AAA";
 }
 
-// Cắt ngắn chuỗi dài
-function truncate(s, n) {
-  return s && s.length > n ? s.slice(0, n) + "…" : s || "";
+function shortVehicle(code) {
+  if (!code) return "—";
+  return code.replace(/^XE_/, "");
+}
+
+function shortDriver(code) {
+  if (!code) return "—";
+  return code.replace(/^DRV_/, "D").replace(/^COD_/, "C");
 }
 
 export function BusListSection() {
-  const { busList, trackedBusId, currentDir, toggleTrackBus, clearTrack } =
+  const { blockList, trackedBlockId, toggleTrackBlock, clearTrack } =
     useSimulation();
 
   return (
     <>
-      <div className="flex justify-between px-3.5 pt-2.5 pb-1 bg-white border-b border-[#d0d7e2]">
-        <span className="text-[10px] text-[#6a7a9a] uppercase tracking-wider">
-          Danh sách xe ({busList.length})
+      <div className="flex justify-between px-3.5 pt-2.5 pb-1 bg-white border-b border-[#D0D7E2]">
+        <span className="text-[10px] text-[#6A7A9A] uppercase tracking-wider font-bold">
+          {blockList.length} block
         </span>
-        <span
-          onClick={clearTrack}
-          className="text-[10px] text-[#169BA2] cursor-pointer hover:text-[#0F7075]"
-        >
-          Bỏ theo dõi
-        </span>
+        {trackedBlockId && (
+          <span
+            onClick={clearTrack}
+            className="text-[10px] text-[#169BA2] cursor-pointer hover:text-[#0F7075] font-semibold"
+          >
+            Bỏ theo dõi
+          </span>
+        )}
       </div>
 
-      <div className="flex-1 overflow-y-auto px-2.5 py-1.5 bg-[#f5f7fa] scrollbar-thin">
-        {busList.map((bus) => {
-          const displayStatus =
-            bus.status === "stopped"
-              ? `⏸ ${truncate(bus.stopName, 18)}`
-              : bus.status === "running"
-                ? `→ ${truncate(bus.stopName, 18)}`
-                : bus.status === "waiting"
-                  ? `Xuất ${bus.startTime.slice(0, 5)}`
-                  : "✓ Kết thúc";
+      <div className="flex-1 overflow-y-auto px-2 py-1 bg-[#F5F7FA] scrollbar-thin">
+        {blockList.length === 0 ? (
+          <div className="py-12 text-center text-xs text-[#8A9AAA]">
+            Chưa có block nào
+          </div>
+        ) : (
+          blockList.map((block) => {
+            const isTracked = block.id === trackedBlockId;
+            const color = dotColor(block.status, block.direction_id);
 
-          const isTracked = bus.trip_id === trackedBusId;
+            let label = "";
+            if (block.status === "running") {
+              label = block.current_trip
+                ? `→ ${block.current_trip.slice(-6)}`
+                : "Đang chạy";
+            } else if (block.status === "stopped") {
+              label = "⏸ Dừng trạm";
+            } else if (block.status === "waiting") {
+              label = "⏳ Chờ xuất bến";
+            } else {
+              label = "✓ Hoàn thành";
+            }
 
-          return (
-            <div
-              key={bus.trip_id}
-              onClick={() => toggleTrackBus(bus.trip_id)}
-              className={`flex items-center gap-2 px-2.5 py-1.5 mb-0.5 rounded-md text-xs cursor-pointer transition-colors border ${
-                isTracked
-                  ? "bg-[#E6F4F5] border-[#8ab3d0]"
-                  : "bg-white border-transparent hover:bg-[#eef2f6]"
-              }`}
-            >
-              <span
-                className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-                style={{ background: dotColor(bus.status, currentDir) }}
-              />
-              <span
-                className={`font-semibold min-w-[80px] ${
-                  bus.status === "running"
-                    ? "text-[#169BA2]"
-                    : bus.status === "stopped"
-                      ? "text-[#d48c2c]"
-                      : bus.status === "waiting"
-                        ? "text-[#8a9aaa]"
-                        : "text-[#b0bcca]"
+            return (
+              <div
+                key={block.id}
+                onClick={() => toggleTrackBlock(block.id)}
+                className={`flex items-center gap-2 px-2.5 py-2 mb-1 rounded-md text-xs cursor-pointer transition-all border ${
+                  isTracked
+                    ? "bg-[#FEF3E2] border-[#FCD9A0] shadow-sm"
+                    : "bg-white border-transparent hover:bg-[#EEF2F6]"
                 }`}
               >
-                {bus.trip_id}
-              </span>
-              {/* Tooltip hiển thị tên trạm đầy đủ khi hover */}
-              <span
-                className="flex-1 text-[11px] text-[#4a5a7a] overflow-hidden whitespace-nowrap text-ellipsis"
-                title={bus.stopName || "—"}
-              >
-                {displayStatus}
-              </span>
-              <span className="text-[11px] text-[#169BA2] whitespace-nowrap">
-                {bus.timeStr}
-              </span>
-            </div>
-          );
-        })}
+                <span
+                  className="w-2 h-2 rounded-full flex-shrink-0"
+                  style={{ background: color }}
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <span
+                      className="font-mono font-bold text-[11px]"
+                      style={{ color }}
+                    >
+                      XE_{shortVehicle(block.vehicle_code)}
+                    </span>
+                    <span className="text-[9px] text-[#8A9AAA] font-mono">
+                      {block.license_plate}
+                    </span>
+                  </div>
+                  <div className="text-[10px] text-[#4A5A7A] truncate mt-0.5">
+                    <span className="font-semibold">
+                      {shortDriver(block.driver_code)}
+                    </span>
+                    {" · "}
+                    {label}
+                  </div>
+                </div>
+                <span className="text-[9px] text-[#8A9AAA] font-mono flex-shrink-0">
+                  {block.trip_count} trip
+                </span>
+              </div>
+            );
+          })
+        )}
       </div>
     </>
   );
