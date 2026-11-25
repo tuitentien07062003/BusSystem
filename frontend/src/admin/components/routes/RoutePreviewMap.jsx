@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
-import L from 'leaflet';
+import { useEffect, useRef } from "react";
+import L from "leaflet";
 
 const DEFAULT_CENTER = [10.7769, 106.7009];
 const DEFAULT_ZOOM = 12;
@@ -14,12 +14,15 @@ const STYLE = `
   }
   .rte-via:hover { transform: scale(1.3); }
   .rte-via:active { cursor: grabbing; transform: scale(1.5); }
+  .route-preview-basemap {
+  filter: grayscale(1) brightness(1.08) contrast(0.78);
+}
 `;
 
 function ensureStyle() {
-  if (document.getElementById('rte-style-v3')) return;
-  const s = document.createElement('style');
-  s.id = 'rte-style-v3';
+  if (document.getElementById("rte-style-v3")) return;
+  const s = document.createElement("style");
+  s.id = "rte-style-v3";
   s.textContent = STYLE;
   document.head.appendChild(s);
 }
@@ -29,7 +32,12 @@ function makeDepotIcon(color, label) {
     <path d="M17 0C7.6 0 0 7.6 0 17c0 12 17 25 17 25s17-13 17-25c0-9.4-7.6-17-17-17z" fill="${color}" stroke="#fff" stroke-width="2"/>
     <text x="17" y="22" font-size="13" font-weight="bold" text-anchor="middle" fill="white">${label}</text>
   </svg>`;
-  return L.divIcon({ html: svg, className: '', iconSize: [34, 42], iconAnchor: [17, 42] });
+  return L.divIcon({
+    html: svg,
+    className: "",
+    iconSize: [34, 42],
+    iconAnchor: [17, 42],
+  });
 }
 
 function makeStopIcon(seq) {
@@ -40,13 +48,18 @@ function makeStopIcon(seq) {
     <circle cx="17" cy="17" r="9" fill="#fff" opacity="0.95"/>
     <text x="17" y="21" font-size="11" font-weight="bold" text-anchor="middle" fill="#169BA2">${seq}</text>
   </svg>`;
-  return L.divIcon({ html: svg, className: '', iconSize: [26, 32], iconAnchor: [13, 32] });
+  return L.divIcon({
+    html: svg,
+    className: "",
+    iconSize: [26, 32],
+    iconAnchor: [13, 32],
+  });
 }
 
 function makeViaIcon() {
   return L.divIcon({
     html: `<div class="rte-via"></div>`,
-    className: '',
+    className: "",
     iconSize: [12, 12],
     iconAnchor: [6, 6],
   });
@@ -58,7 +71,9 @@ function haversine(lat1, lng1, lat2, lng2) {
   const toRad = (d) => (d * Math.PI) / 180;
   const dLat = toRad(lat2 - lat1);
   const dLng = toRad(lng2 - lng1);
-  const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
   return 2 * R * Math.asin(Math.sqrt(a));
 }
 
@@ -66,7 +81,15 @@ function cumulativeDistancesCoords(coords) {
   if (!coords?.length) return [];
   const dists = [0];
   for (let i = 1; i < coords.length; i++) {
-    dists.push(dists[i - 1] + haversine(coords[i - 1][1], coords[i - 1][0], coords[i][1], coords[i][0]));
+    dists.push(
+      dists[i - 1] +
+        haversine(
+          coords[i - 1][1],
+          coords[i - 1][0],
+          coords[i][1],
+          coords[i][0],
+        ),
+    );
   }
   return dists;
 }
@@ -79,14 +102,18 @@ function findNearestShapeIdx(coords, lat, lng) {
     const dx = coords[i][0] - lng;
     const dy = coords[i][1] - lat;
     const d = dx * dx + dy * dy;
-    if (d < bestD) { bestD = d; bestIdx = i; }
+    if (d < bestD) {
+      bestD = d;
+      bestIdx = i;
+    }
   }
   return bestIdx;
 }
 
 // Xác định segment_index = giữa points[i] và points[i+1] mà vị trí (lat,lng) thuộc về
 function findSegmentIndex(preview, lat, lng) {
-  if (!preview?.shape?.coordinates?.length || !preview?.points?.length) return 0;
+  if (!preview?.shape?.coordinates?.length || !preview?.points?.length)
+    return 0;
   const coords = preview.shape.coordinates;
   const cum = cumulativeDistancesCoords(coords);
   const idx = findNearestShapeIdx(coords, lat, lng);
@@ -149,30 +176,47 @@ export function RoutePreviewMap({
   const hasFittedRef = useRef(false);
   const isDraggingRef = useRef(false);
 
-  const callbacksRef = useRef({ onAddViaPoint, onMoveViaPoint, onRemoveViaPoint });
+  const callbacksRef = useRef({
+    onAddViaPoint,
+    onMoveViaPoint,
+    onRemoveViaPoint,
+  });
   useEffect(() => {
     callbacksRef.current = { onAddViaPoint, onMoveViaPoint, onRemoveViaPoint };
   }, [onAddViaPoint, onMoveViaPoint, onRemoveViaPoint]);
 
   const previewRef = useRef(preview);
-  useEffect(() => { previewRef.current = preview; }, [preview]);
+  useEffect(() => {
+    previewRef.current = preview;
+  }, [preview]);
 
-  useEffect(() => { ensureStyle(); }, []);
+  useEffect(() => {
+    ensureStyle();
+  }, []);
 
   // Init map
   useEffect(() => {
     if (mapRef.current || !containerRef.current) return;
-    const map = L.map(containerRef.current, { zoomControl: true }).setView(DEFAULT_CENTER, DEFAULT_ZOOM);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-      attribution: '© OpenStreetMap © CARTO',
-      subdomains: 'abcd',
+    const map = L.map(containerRef.current, { zoomControl: true }).setView(
+      DEFAULT_CENTER,
+      DEFAULT_ZOOM,
+    );
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 19,
+      className: "route-preview-basemap",
     }).addTo(map);
     mapRef.current = map;
-    return () => { map.remove(); mapRef.current = null; };
+    return () => {
+      map.remove();
+      mapRef.current = null;
+    };
   }, []);
 
-  useEffect(() => { hasFittedRef.current = false; }, [startDepot?.id, endDepot?.id]);
+  useEffect(() => {
+    hasFittedRef.current = false;
+  }, [startDepot?.id, endDepot?.id]);
 
   // ─── Drag line ───
   function startLineDrag(map, lat, lng) {
@@ -180,7 +224,7 @@ export function RoutePreviewMap({
     if (!previewData?.shape?.coordinates?.length) return;
 
     isDraggingRef.current = true;
-    map.getContainer().style.cursor = 'grabbing';
+    map.getContainer().style.cursor = "grabbing";
     if (map.dragging) map.dragging.disable();
 
     const coords = previewData.shape.coordinates;
@@ -190,21 +234,26 @@ export function RoutePreviewMap({
 
     const tempLayer = L.polyline(
       coordsToLatLngs(buildTempCoords(coords, nearestIdx, lat, lng)),
-      { color: '#0d6efd', weight: 5, opacity: 0.95 }
+      { color: "#0d6efd", weight: 5, opacity: 0.95 },
     ).addTo(map);
     tempLayer.bringToFront();
     tempLayerRef.current = tempLayer;
 
     const onMove = (ev) => {
-      const newCoords = buildTempCoords(coords, nearestIdx, ev.latlng.lat, ev.latlng.lng);
+      const newCoords = buildTempCoords(
+        coords,
+        nearestIdx,
+        ev.latlng.lat,
+        ev.latlng.lng,
+      );
       tempLayer.setLatLngs(coordsToLatLngs(newCoords));
     };
 
     const onUp = (ev) => {
-      map.off('mousemove', onMove);
-      map.off('mouseup', onUp);
+      map.off("mousemove", onMove);
+      map.off("mouseup", onUp);
       if (map.dragging) map.dragging.enable();
-      map.getContainer().style.cursor = '';
+      map.getContainer().style.cursor = "";
       isDraggingRef.current = false;
 
       if (tempLayerRef.current) {
@@ -215,8 +264,17 @@ export function RoutePreviewMap({
 
       const moved = haversine(lat, lng, ev.latlng.lat, ev.latlng.lng) > 15;
       if (moved) {
-        const segmentIdx = findSegmentIndex(previewData, ev.latlng.lat, ev.latlng.lng);
-        const offsetInSeg = computeOffsetInSegment(previewData, segmentIdx, ev.latlng.lat, ev.latlng.lng);
+        const segmentIdx = findSegmentIndex(
+          previewData,
+          ev.latlng.lat,
+          ev.latlng.lng,
+        );
+        const offsetInSeg = computeOffsetInSegment(
+          previewData,
+          segmentIdx,
+          ev.latlng.lat,
+          ev.latlng.lng,
+        );
         callbacksRef.current.onAddViaPoint?.({
           latitude: ev.latlng.lat,
           longitude: ev.latlng.lng,
@@ -226,8 +284,8 @@ export function RoutePreviewMap({
       }
     };
 
-    map.on('mousemove', onMove);
-    map.on('mouseup', onUp);
+    map.on("mousemove", onMove);
+    map.on("mouseup", onUp);
   }
 
   // ─── Drag via marker ───
@@ -236,7 +294,7 @@ export function RoutePreviewMap({
     if (!previewData?.shape?.coordinates?.length) return;
 
     isDraggingRef.current = true;
-    map.getContainer().style.cursor = 'grabbing';
+    map.getContainer().style.cursor = "grabbing";
 
     const coords = previewData.shape.coordinates;
     const vp = viaPoints[viaIdx];
@@ -249,22 +307,29 @@ export function RoutePreviewMap({
 
     let nearestIdx = findNearestShapeIdx(coords, vp.latitude, vp.longitude);
     const tempLayer = L.polyline(
-      coordsToLatLngs(buildTempCoords(coords, nearestIdx, vp.latitude, vp.longitude)),
-      { color: '#9c27b0', weight: 5, opacity: 0.95 }
+      coordsToLatLngs(
+        buildTempCoords(coords, nearestIdx, vp.latitude, vp.longitude),
+      ),
+      { color: "#9c27b0", weight: 5, opacity: 0.95 },
     ).addTo(map);
     tempLayer.bringToFront();
     tempLayerRef.current = tempLayer;
 
     const onMove = (ev) => {
       nearestIdx = findNearestShapeIdx(coords, ev.latlng.lat, ev.latlng.lng);
-      const newCoords = buildTempCoords(coords, nearestIdx, ev.latlng.lat, ev.latlng.lng);
+      const newCoords = buildTempCoords(
+        coords,
+        nearestIdx,
+        ev.latlng.lat,
+        ev.latlng.lng,
+      );
       tempLayer.setLatLngs(coordsToLatLngs(newCoords));
     };
 
     const onUp = (ev) => {
-      map.off('mousemove', onMove);
-      map.off('mouseup', onUp);
-      map.getContainer().style.cursor = '';
+      map.off("mousemove", onMove);
+      map.off("mouseup", onUp);
+      map.getContainer().style.cursor = "";
       isDraggingRef.current = false;
 
       if (vMarker) vMarker.setOpacity(1);
@@ -274,8 +339,17 @@ export function RoutePreviewMap({
       }
       routeLayerRef.current?.setStyle({ opacity: 0.85 });
 
-      const segmentIdx = findSegmentIndex(previewData, ev.latlng.lat, ev.latlng.lng);
-      const offsetInSeg = computeOffsetInSegment(previewData, segmentIdx, ev.latlng.lat, ev.latlng.lng);
+      const segmentIdx = findSegmentIndex(
+        previewData,
+        ev.latlng.lat,
+        ev.latlng.lng,
+      );
+      const offsetInSeg = computeOffsetInSegment(
+        previewData,
+        segmentIdx,
+        ev.latlng.lat,
+        ev.latlng.lng,
+      );
       callbacksRef.current.onMoveViaPoint?.(viaIdx, {
         latitude: ev.latlng.lat,
         longitude: ev.latlng.lng,
@@ -284,8 +358,8 @@ export function RoutePreviewMap({
       });
     };
 
-    map.on('mousemove', onMove);
-    map.on('mouseup', onUp);
+    map.on("mousemove", onMove);
+    map.on("mouseup", onUp);
   }
 
   // Vẽ route + markers
@@ -293,47 +367,67 @@ export function RoutePreviewMap({
     const map = mapRef.current;
     if (!map) return;
 
-    if (routeLayerRef.current) { map.removeLayer(routeLayerRef.current); routeLayerRef.current = null; }
-    if (tempLayerRef.current) { map.removeLayer(tempLayerRef.current); tempLayerRef.current = null; }
+    if (routeLayerRef.current) {
+      map.removeLayer(routeLayerRef.current);
+      routeLayerRef.current = null;
+    }
+    if (tempLayerRef.current) {
+      map.removeLayer(tempLayerRef.current);
+      tempLayerRef.current = null;
+    }
     markersRef.current.forEach((m) => map.removeLayer(m));
     markersRef.current = [];
 
     if (!preview) {
       if (startDepot && endDepot) {
-        const s = L.marker([startDepot.latitude, startDepot.longitude], { icon: makeDepotIcon('#169BA2', 'Đ') })
-          .addTo(map).bindPopup(`<b>${startDepot.stop_name}</b>`);
-        const e = L.marker([endDepot.latitude, endDepot.longitude], { icon: makeDepotIcon('#c0392b', 'C') })
-          .addTo(map).bindPopup(`<b>${endDepot.stop_name}</b>`);
+        const s = L.marker([startDepot.latitude, startDepot.longitude], {
+          icon: makeDepotIcon("#169BA2", "Đ"),
+        })
+          .addTo(map)
+          .bindPopup(`<b>${startDepot.stop_name}</b>`);
+        const e = L.marker([endDepot.latitude, endDepot.longitude], {
+          icon: makeDepotIcon("#c0392b", "C"),
+        })
+          .addTo(map)
+          .bindPopup(`<b>${endDepot.stop_name}</b>`);
         markersRef.current.push(s, e);
         if (!hasFittedRef.current) {
-          map.fitBounds(L.latLngBounds([
-            [startDepot.latitude, startDepot.longitude],
-            [endDepot.latitude, endDepot.longitude],
-          ]), { padding: [60, 60], maxZoom: 15 });
+          map.fitBounds(
+            L.latLngBounds([
+              [startDepot.latitude, startDepot.longitude],
+              [endDepot.latitude, endDepot.longitude],
+            ]),
+            { padding: [60, 60], maxZoom: 15 },
+          );
           hasFittedRef.current = true;
         }
       } else if (startDepot) {
-        const s = L.marker([startDepot.latitude, startDepot.longitude], { icon: makeDepotIcon('#169BA2', 'Đ') }).addTo(map);
+        const s = L.marker([startDepot.latitude, startDepot.longitude], {
+          icon: makeDepotIcon("#169BA2", "Đ"),
+        }).addTo(map);
         markersRef.current.push(s);
-        if (!hasFittedRef.current) { map.setView([startDepot.latitude, startDepot.longitude], 14); hasFittedRef.current = true; }
+        if (!hasFittedRef.current) {
+          map.setView([startDepot.latitude, startDepot.longitude], 14);
+          hasFittedRef.current = true;
+        }
       }
       return;
     }
 
     const routeLayer = L.geoJSON(preview.shape, {
-      style: { color: '#169BA2', weight: 5, opacity: 0.85 },
+      style: { color: "#169BA2", weight: 5, opacity: 0.85 },
     }).addTo(map);
     routeLayerRef.current = routeLayer;
 
     if (!readOnly && preview.shape?.coordinates?.length > 1) {
       routeLayer.eachLayer((layer) => {
-        layer.on('mouseover', () => {
-          if (!isDraggingRef.current) map.getContainer().style.cursor = 'grab';
+        layer.on("mouseover", () => {
+          if (!isDraggingRef.current) map.getContainer().style.cursor = "grab";
         });
-        layer.on('mouseout', () => {
-          if (!isDraggingRef.current) map.getContainer().style.cursor = '';
+        layer.on("mouseout", () => {
+          if (!isDraggingRef.current) map.getContainer().style.cursor = "";
         });
-        layer.on('mousedown', (e) => {
+        layer.on("mousedown", (e) => {
           L.DomEvent.stopPropagation(e);
           if (isDraggingRef.current) return;
           startLineDrag(map, e.latlng.lat, e.latlng.lng);
@@ -346,28 +440,38 @@ export function RoutePreviewMap({
       const isFirst = idx === 0;
       const isLast = idx === preview.points.length - 1;
       const icon = isDepot
-        ? makeDepotIcon(isFirst ? '#169BA2' : isLast ? '#c0392b' : '#d48c2c', isFirst ? 'Đ' : isLast ? 'C' : '·')
+        ? makeDepotIcon(
+            isFirst ? "#169BA2" : isLast ? "#c0392b" : "#d48c2c",
+            isFirst ? "Đ" : isLast ? "C" : "·",
+          )
         : makeStopIcon(p.sequence - 1);
-      const m = L.marker([p.latitude, p.longitude], { icon, zIndexOffset: 1000 })
+      const m = L.marker([p.latitude, p.longitude], {
+        icon,
+        zIndexOffset: 1000,
+      })
         .addTo(map)
         .bindPopup(
           `<div class="bus-popup"><b>${p.stop_name}</b>
-            <div class="sub">${isDepot ? 'Depot' : `Trạm #${p.sequence - 1}`}</div>
-          </div>`
+            <div class="sub">${isDepot ? "Depot" : `Trạm #${p.sequence - 1}`}</div>
+          </div>`,
         );
       markersRef.current.push(m);
     });
 
     if (!hasFittedRef.current && preview.points?.length > 0) {
-      map.fitBounds(L.latLngBounds(preview.points.map((p) => [p.latitude, p.longitude])), {
-        padding: [60, 60], maxZoom: 15,
-      });
+      map.fitBounds(
+        L.latLngBounds(preview.points.map((p) => [p.latitude, p.longitude])),
+        {
+          padding: [60, 60],
+          maxZoom: 15,
+        },
+      );
       hasFittedRef.current = true;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [preview, startDepot, endDepot, readOnly]);
 
-    // ─── Hover marker — pin giọt nước nhỏ ───
+  // ─── Hover marker — pin giọt nước nhỏ ───
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
@@ -387,7 +491,7 @@ export function RoutePreviewMap({
     const marker = L.marker([hoveredStop.latitude, hoveredStop.longitude], {
       icon: L.divIcon({
         html: pinSvg,
-        className: '',
+        className: "",
         iconSize: [22, 28],
         iconAnchor: [11, 28],
       }),
@@ -405,7 +509,6 @@ export function RoutePreviewMap({
       }
     };
   }, [hoveredStop]);
-
 
   // ─── Focus stop (click vào row) ───
   useEffect(() => {
@@ -429,16 +532,16 @@ export function RoutePreviewMap({
       const marker = L.marker([vp.latitude, vp.longitude], {
         icon: makeViaIcon(),
         zIndexOffset: 3000,
-        title: 'Kéo để di chuyển · Double-click để xoá',
+        title: "Kéo để di chuyển · Double-click để xoá",
       }).addTo(map);
 
-      marker.on('mousedown', (e) => {
+      marker.on("mousedown", (e) => {
         L.DomEvent.stopPropagation(e);
         if (isDraggingRef.current) return;
         startViaDrag(map, idx);
       });
 
-      marker.on('dblclick', (e) => {
+      marker.on("dblclick", (e) => {
         L.DomEvent.stopPropagation(e);
         if (confirm(`Xoá điểm điều hướng #${idx + 1}?`)) {
           callbacksRef.current.onRemoveViaPoint?.(idx);

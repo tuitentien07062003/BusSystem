@@ -11,11 +11,19 @@ import {
   UserCog,
   ClipboardList,
   ArrowRightLeft,
+  ScanLine,
+  GraduationCap,
+  MessageSquare,
+  BarChart3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 // ─── Menu chính ───
 const NAV_GROUPS = [
+  {
+    title: "Thống kê",
+    items: [{ to: "/admin/stats", label: "Thống kê", icon: BarChart3 }],
+  },
   {
     title: "Quản lý",
     items: [
@@ -43,7 +51,16 @@ const NAV_GROUPS = [
   },
   {
     title: "Khác",
-    items: [{ to: "/", label: "Xem mô phỏng", icon: Bus, external: true }],
+    items: [
+      { to: "/", label: "Xem mô phỏng", icon: Bus, external: true },
+      { to: "/admin/scanner", label: "Soát vé", icon: ScanLine },
+      {
+        to: "/admin/feedbacks",
+        label: "Góp ý & Phản hồi",
+        icon: MessageSquare,
+      },
+      { to: "/admin/students", label: "Duyệt sinh viên", icon: GraduationCap },
+    ],
   },
 ];
 

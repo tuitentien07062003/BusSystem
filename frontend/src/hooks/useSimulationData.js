@@ -24,6 +24,8 @@ export function useSimAssignments({ date, route_id, enabled = true }) {
     queryKey: ["sim", "assignments", { date, route_id }],
     queryFn: () => api.fetchSimAssignments({ date, route_id }),
     enabled: !!date && enabled,
-    staleTime: 2 * 60 * 1000,
+    staleTime: 0,
+    refetchOnMount: "always",
+    refetchOnWindowFocus: true,
   });
 }

@@ -1,0 +1,24 @@
+{
+  "name": "TBus Passenger",
+  "short_name": "TBus",
+  "description": "Tra cứu tuyến xe buýt TP.HCM",
+  "start_url": "/passenger",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#169BA2",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/logo/tbus-logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo/tbus-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
